@@ -31,6 +31,8 @@ import java.util.Calendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.R.color.black;
+
 public class InitialScreenActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     @BindView(R.id.my_toolbar)
@@ -159,26 +161,31 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     public void collectWeatherData() {
         collectCurrentWeather.collectCurrentWeather(selectedPlace , new WeatherCallback() {
             @Override
-            public void success(String description, double tempMin, double tempMax) {
+            public void success(String description, double tempMin, double tempMax, double windInMph) {
                 forecastCardView.setVisibility(View.VISIBLE);
 
                 int minTempInCelcious = (int) (tempMin - 273.15);
                 int maxTempInCelcious = (int) (tempMax - 273.15);
 
+                //todo: Add more option to switch statement
+
                 switch (description) {
                     case "clear sky":
-                        currentWeatherIcon.setImageResource(R.drawable.ic_clear_sky);
-                        currentWeatherIcon.setColorFilter(getResources().getColor(R.color.sunSineLolipop));
+                        currentWeatherIcon.setImageResource(R.drawable.sunny);
                         break;
                     case "mist":
-                        currentWeatherIcon.setImageResource(R.drawable.weather_fog);
+                        currentWeatherIcon.setImageResource(R.drawable.mist);
+                        break;
+                    case "few clouds":
+                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
                         break;
                 }
 
-
+                weatherForecast.setTextColor(getResources().getColor(black));
                 weatherForecast.setText("The Weather forecast for today is " + description + "."
                         + "\nThe Minimum temp is " + minTempInCelcious + "°C"
-                        + " & Maximum temp is " + maxTempInCelcious + "°C.");
+                        + " & Maximum temp is " + maxTempInCelcious + "°C."
+                + "\nWind speed is " + windInMph + "mph");
 
             }
 

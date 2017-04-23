@@ -87,12 +87,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
-            <ImageView
-                android:id="@+id/weather_icon"
-                android:src="@drawable/ic_cloud"
-                android:paddingRight="2dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/time"
@@ -133,7 +127,7 @@
                     <ImageView
                         android:id="@+id/current_weather_icon"
                         android:paddingEnd="15dp"
-                        android:layout_width="wrap_content"
+                        android:layout_width="50dp"
                         android:layout_height="wrap_content" />
 
                 </LinearLayout>
