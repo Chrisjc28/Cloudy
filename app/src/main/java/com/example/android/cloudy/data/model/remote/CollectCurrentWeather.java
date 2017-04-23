@@ -56,8 +56,9 @@ public class CollectCurrentWeather implements WeatherDAO {
                 description = weather.getJSONObject(i).getString("description");
             }
             JSONObject main = response.getJSONObject("main");
-            double temp = Double.parseDouble((main.getString("temp")));
-            cb.success(description, temp);
+            double tempMin = Double.parseDouble(main.getString("temp_min"));
+            double tempMax = Double.parseDouble(main.getString("temp_max"));
+            cb.success(description, tempMin, tempMax);
         } catch (JSONException e) {
             e.printStackTrace();
         }
