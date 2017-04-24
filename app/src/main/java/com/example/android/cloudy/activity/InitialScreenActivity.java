@@ -3,8 +3,11 @@ package com.example.android.cloudy.activity;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -15,7 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.cloudy.R;
+import com.example.android.cloudy.adpaters.ForecastAdapter;
 import com.example.android.cloudy.data.model.remote.CollectCurrentWeather;
+import com.example.android.cloudy.data.model.remote.CollectFiveDayForecast;
 import com.example.android.cloudy.data.model.remote.WeatherCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,14 +31,16 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.R.color.black;
+import static com.example.android.cloudy.R.id.forecast;
 
-public class InitialScreenActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class InitialScreenActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     @BindView(R.id.my_toolbar)
     Toolbar MyToolbar;
@@ -41,11 +48,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     TextView TimeText;
     @BindView(R.id.day)
     TextView CurrentDay;
-    @BindView(R.id.refresh_icon)
-    ImageView refreshIcon;
-    @BindView(R.id.updated_time)
-    TextView lastUpdated;
-    @BindView(R.id.forecast)
+    @BindView(forecast)
     TextView weatherForecast;
     @BindView(R.id.current_forecast_card_view)
     CardView forecastCardView;
@@ -53,35 +56,45 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     ImageView currentWeatherIcon;
 
     private CollectCurrentWeather collectCurrentWeather = new CollectCurrentWeather();
+    private CollectFiveDayForecast collectFiveDayForecast = new CollectFiveDayForecast();
     public PlaceAutocompleteFragment autocompleteFragment;
     public Menu menuOptions;
     public GoogleApiClient googleApiClient;
     public String selectedPlace;
+    private RecyclerView weatherRecyclerView;
+    private RecyclerView.Adapter forecastAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+    public ArrayList<String> fiveDayForecast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial_screen);
+        weatherRecyclerView = (RecyclerView) findViewById(R.id.weather_recycler_view);
         ButterKnife.bind(this);
 
         MyToolbar.setTitleTextColor(getColor(R.color.menuItems));
+        weatherRecyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(this);
+        weatherRecyclerView.setLayoutManager(layoutManager);
+
+        forecastAdapter = new ForecastAdapter(fiveDayForecast);
+        weatherRecyclerView.setAdapter(forecastAdapter);
 
         setSupportActionBar(MyToolbar);
         setCurrentTime();
         setCurrentDay();
-        setLastUpdated();
-        refreshData();
         googleApiInit();
 
-        forecastCardView.setVisibility(View.GONE);
         autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 selectedPlace = place.getName().toString();
-                collectWeatherData();
+                collectCurrentWeatherData();
+                collectFiveDayForecast();
             }
 
             @Override
@@ -89,6 +102,18 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
                 Log.i("CHRIS", "An error occurred: " + status);
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        googleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        googleApiClient.disconnect();
+        super.onStop();
     }
 
     @SuppressLint("NewApi")
@@ -135,12 +160,6 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         TimeText.setText(currentDateTimeString);
     }
 
-    public void setLastUpdated() {
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-        String lastUpDated = df.format(c.getTime());
-        lastUpdated.setText("Last updated " + lastUpDated);
-    }
 
     public void setCurrentDay() {
         Calendar c = Calendar.getInstance();
@@ -149,17 +168,9 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         CurrentDay.setText(currentDateTimeString);
     }
 
-    public void refreshData() {
-        refreshIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setLastUpdated();
-            }
-        });
-    }
 
-    public void collectWeatherData() {
-        collectCurrentWeather.collectCurrentWeather(selectedPlace , new WeatherCallback() {
+    public void collectCurrentWeatherData() {
+        collectCurrentWeather.collectWeather(selectedPlace , new WeatherCallback() {
             @Override
             public void success(String description, double tempMin, double tempMax, double windInMph) {
                 forecastCardView.setVisibility(View.VISIBLE);
@@ -179,6 +190,18 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
                     case "few clouds":
                         currentWeatherIcon.setImageResource(R.drawable.cloudy);
                         break;
+                    case "scattered clouds":
+                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
+                        break;
+                    case "heavy intensity rain":
+                        currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
+                    case "overcast clouds":
+                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
+                        break;
+                    case "light rain":
+                        currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
                 }
 
                 weatherForecast.setTextColor(getResources().getColor(black));
@@ -194,5 +217,42 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
                 Log.i("CHRIS", "Sorry there was an error displaying the weather");
             }
         });
+    }
+
+    public void collectFiveDayForecast() {
+        collectFiveDayForecast.collectWeather(selectedPlace, new WeatherCallback() {
+            @Override
+            public void success(String description, double tempMin, double tempMax, double windInMph) {
+
+                int minTempInCelcious = (int) (tempMin - 273.15);
+                int maxTempInCelcious = (int) (tempMax - 273.15);
+
+                fiveDayForecast.add("The Weather forecast for today is " + description + "."
+                        + "\nThe Minimum temp is " + minTempInCelcious + "°C"
+                        + " & Maximum temp is " + maxTempInCelcious + "°C."
+                        + "\nWind speed is " + windInMph + "mph");
+            }
+
+            @Override
+            public void failure(String failed) {
+                Log.i("CHRIS", "Sorry there was an error displaying the weather");
+            }
+        });
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 }

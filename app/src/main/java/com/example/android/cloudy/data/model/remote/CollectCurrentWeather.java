@@ -22,7 +22,7 @@ public class CollectCurrentWeather implements WeatherDAO {
     private static final String API_KEY = "91b9b78861116f95facbc935907c6ae5";
 
     @Override
-    public void collectCurrentWeather(String citySearch, final WeatherCallback cb) {
+    public void collectWeather(String citySearch, final WeatherCallback cb) {
         if (API_KEY == null) {
             Log.i("CHRIS", "CollectCurrentWeather: Error with the api key ");
         }
