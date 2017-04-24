@@ -50,6 +50,8 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     TextView CurrentDay;
     @BindView(forecast)
     TextView weatherForecast;
+    @BindView(R.id.location)
+    TextView chosenLocation;
     @BindView(R.id.current_forecast_card_view)
     CardView forecastCardView;
     @BindView(R.id.current_weather_icon)
@@ -93,6 +95,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
             @Override
             public void onPlaceSelected(Place place) {
                 selectedPlace = place.getName().toString();
+                chosenLocation.setText(place.getName().toString());
                 collectCurrentWeatherData();
                 collectFiveDayForecast();
             }
@@ -193,14 +196,23 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
                     case "scattered clouds":
                         currentWeatherIcon.setImageResource(R.drawable.cloudy);
                         break;
-                    case "heavy intensity rain":
-                        currentWeatherIcon.setImageResource(R.drawable.rain);
-                        break;
                     case "overcast clouds":
                         currentWeatherIcon.setImageResource(R.drawable.cloudy);
                         break;
+                    case "heavy intensity rain":
+                        currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
+                    case "light intensity shower rain":
+                        currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
+                    case "shower rain":
+                        currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
                     case "light rain":
                         currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
+                    default:
+                        currentWeatherIcon.setImageResource(R.drawable.sunny);
                         break;
                 }
 

@@ -7,10 +7,17 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.example.android.cloudy.pojos.Forecast;
+import com.example.android.cloudy.pojos.ForecastListItem;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by ccu17 on 24/04/2017.
@@ -49,6 +56,19 @@ public class CollectFiveDayForecast implements WeatherDAO {
     }
 
     public void jsonParsing(JSONObject response ,final WeatherCallback cb) {
+
+        Gson gson = new Gson();
+
+        String GsonString = response.toString();
+
+        Forecast forecastList = gson.fromJson(GsonString, Forecast.class);
+
+        ArrayList<ForecastListItem> forecastListItems = forecastList.getList();
+
+        // HashMap ourlist = sortForecastIntoDays(forecastListItem)
+        // ourlist.get(new Date());
+
+
         try {
             JSONArray foreCastList = response.getJSONArray("list");
             for (int i = 0; i < foreCastList.length(); i++) {
@@ -74,4 +94,10 @@ public class CollectFiveDayForecast implements WeatherDAO {
             cb.failure("Failed");
         }
     }
+
+    private HashMap<Date, ArrayList<ForecastListItem>> sortForecastIntoDays(ArrayList<ForecastListItem> originalForecastList) {
+
+        return null;
+    }
+
 }
