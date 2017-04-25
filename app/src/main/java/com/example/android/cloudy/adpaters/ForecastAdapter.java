@@ -29,7 +29,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
         public ViewHolder(View v) {
             super(v);
             cardView = (CardView) v.findViewById(R.id.forecast_card_view);
-            textView = (TextView) v.findViewById(R.id.something);
+            textView = (TextView) v.findViewById(R.id.five_day_forecast);
         }
     }
 

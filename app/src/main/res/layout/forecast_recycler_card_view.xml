@@ -16,7 +16,7 @@
         card_view:cardCornerRadius="4dp">
 
         <TextView
-            android:id="@+id/something"
+            android:id="@+id/five_day_forecast"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

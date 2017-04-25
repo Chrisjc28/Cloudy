@@ -31,11 +31,12 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
+import org.joda.time.DateTime;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Set;
+import java.util.Date;
 import java.util.TreeMap;
 
 import butterknife.BindView;
@@ -240,14 +241,25 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         collectWeatherData.collectForecast(selectedPlace, new ForecastCallback() {
             @Override
             public void success(TreeMap<String, ArrayList<ForecastListItem>> map) {
-                Set<String> keys = map.keySet();
-                for (String key : keys) {
-                    List dayList = map.get(key);
-                    dayList
+//                Set<String> keys = map.keySet();
+//                for (String key : keys) {
+//                    List dayList = map.get(key);
+//
+//                }
 
+                Date todaysDate = new Date();
+                DateTime dtOrg = new DateTime(todaysDate);
 
+                for (int i = 0; i < 5; i++) {
+                    DateTime dtPlusOne = dtOrg.plusDays(1);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd MM yyyy");
+                    String day = sdf.format(dtPlusOne.toDate());
+
+                    ArrayList<ForecastListItem> requiredDateForecast = map.get(day);
+                    float averageWind = getAverageWind(requiredDateForecast);
+//                    float averageTemp = getAverageTemp
                 }
-
             }
 
             @Override
@@ -257,6 +269,9 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         });
     }
 
+    private float getAverageWind(ArrayList<ForecastListItem> forecastListItems) {
+        //
+    }
 
     @Override
     protected void onResume() {
