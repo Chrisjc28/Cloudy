@@ -179,6 +179,9 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
                     case "few clouds":
                         currentWeatherIcon.setImageResource(R.drawable.cloudy);
                         break;
+                    case "broken clouds":
+                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
+                        break;
                 }
 
                 weatherForecast.setTextColor(getResources().getColor(black));
