@@ -49,7 +49,6 @@ public class CollectWeatherData implements WeatherDAO {
 
     }
 
-
     public void jsonParsing(JSONObject response ,final WeatherCallback cb) {
         try {
             JSONArray weather = response.getJSONArray("weather");
@@ -91,7 +90,6 @@ public class CollectWeatherData implements WeatherDAO {
                     e.printStackTrace();
                 }
             }
-
             @Override
             public void onError(ANError anError) {
 
@@ -99,7 +97,6 @@ public class CollectWeatherData implements WeatherDAO {
         });
 
     }
-
 
     public void jsonParsing(JSONObject response, final ForecastCallback cb) throws JSONException {
         ListOfDailyForecasts dailyForecast = new Gson().fromJson(response.toString(), ListOfDailyForecasts.class);

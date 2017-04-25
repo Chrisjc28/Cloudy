@@ -61,6 +61,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     public PlaceAutocompleteFragment autocompleteFragment;
     public Menu menuOptions;
     public GoogleApiClient googleApiClient;
+
     public String selectedPlace;
     private RecyclerView weatherRecyclerView;
     private RecyclerView.Adapter forecastAdapter;
@@ -69,6 +70,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial_screen);
         weatherRecyclerView = (RecyclerView) findViewById(R.id.weather_recycler_view);
@@ -76,10 +78,10 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
 
         MyToolbar.setTitleTextColor(getColor(R.color.menuItems));
         weatherRecyclerView.setHasFixedSize(true);
-        weatherRecyclerView.setAdapter(forecastAdapter);
 
         layoutManager = new LinearLayoutManager(this);
         weatherRecyclerView.setLayoutManager(layoutManager);
+
 
         setSupportActionBar(MyToolbar);
         setCurrentTime();
