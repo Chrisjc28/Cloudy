@@ -11,7 +11,7 @@ import java.util.TreeMap;
 
 public interface ForecastCallback {
 
-    void success(TreeMap<String, ArrayList<ForecastListItem>> map);
+//    void success(TreeMap<String, ArrayList<ForecastListItem>> map);
 
     void failure(String failed);
 
