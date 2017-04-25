@@ -7,4 +7,6 @@ package com.example.android.cloudy.data.model.remote;
 public interface WeatherDAO {
 
     void collectWeather(String citySearch, WeatherCallback cb);
+
+    void collectForecast(String citySearch, ForecastCallback cb);
 }

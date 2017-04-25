@@ -3,14 +3,22 @@ package com.example.android.cloudy.pojos;
 
 import com.google.gson.annotations.Expose;
 
+import java.util.Date;
+
 public class ForecastListItem {
 
+    @Expose
+    private Integer dt;
     @Expose
     private Main main;
     @Expose
     private java.util.List<Weather> weather = null;
     @Expose
     private Wind wind;
+
+    public Date getDate() {
+        return new Date(dt * 1000L);
+    }
 
     public Main getMain() {
         return main;

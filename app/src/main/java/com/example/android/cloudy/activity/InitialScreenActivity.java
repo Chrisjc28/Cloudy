@@ -19,9 +19,10 @@ import android.widget.TextView;
 
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.adpaters.ForecastAdapter;
-import com.example.android.cloudy.data.model.remote.CollectCurrentWeather;
-import com.example.android.cloudy.data.model.remote.CollectFiveDayForecast;
+import com.example.android.cloudy.data.model.remote.CollectWeatherData;
+import com.example.android.cloudy.data.model.remote.ForecastCallback;
 import com.example.android.cloudy.data.model.remote.WeatherCallback;
+import com.example.android.cloudy.pojos.ForecastListItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -33,11 +34,15 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.R.color.black;
+import static com.example.android.cloudy.R.id.day;
 import static com.example.android.cloudy.R.id.forecast;
 
 public class InitialScreenActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -46,7 +51,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     Toolbar MyToolbar;
     @BindView(R.id.time)
     TextView TimeText;
-    @BindView(R.id.day)
+    @BindView(day)
     TextView CurrentDay;
     @BindView(forecast)
     TextView weatherForecast;
@@ -57,8 +62,8 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     @BindView(R.id.current_weather_icon)
     ImageView currentWeatherIcon;
 
-    private CollectCurrentWeather collectCurrentWeather = new CollectCurrentWeather();
-    private CollectFiveDayForecast collectFiveDayForecast = new CollectFiveDayForecast();
+    private CollectWeatherData collectWeatherData = new CollectWeatherData();
+//    private CollectFiveDayForecast collectFiveDayForecast = new CollectFiveDayForecast();
     public PlaceAutocompleteFragment autocompleteFragment;
     public Menu menuOptions;
     public GoogleApiClient googleApiClient;
@@ -173,7 +178,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
 
 
     public void collectCurrentWeatherData() {
-        collectCurrentWeather.collectWeather(selectedPlace , new WeatherCallback() {
+        collectWeatherData.collectWeather(selectedPlace , new WeatherCallback() {
             @Override
             public void success(String description, double tempMin, double tempMax, double windInMph) {
                 forecastCardView.setVisibility(View.VISIBLE);
@@ -232,17 +237,17 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     }
 
     public void collectFiveDayForecast() {
-        collectFiveDayForecast.collectWeather(selectedPlace, new WeatherCallback() {
+        collectWeatherData.collectForecast(selectedPlace, new ForecastCallback() {
             @Override
-            public void success(String description, double tempMin, double tempMax, double windInMph) {
+            public void success(TreeMap<String, ArrayList<ForecastListItem>> map) {
+                Set<String> keys = map.keySet();
+                for (String key : keys) {
+                    List dayList = map.get(key);
+                    dayList
 
-                int minTempInCelcious = (int) (tempMin - 273.15);
-                int maxTempInCelcious = (int) (tempMax - 273.15);
 
-                fiveDayForecast.add("The Weather forecast for today is " + description + "."
-                        + "\nThe Minimum temp is " + minTempInCelcious + "°C"
-                        + " & Maximum temp is " + maxTempInCelcious + "°C."
-                        + "\nWind speed is " + windInMph + "mph");
+                }
+
             }
 
             @Override
