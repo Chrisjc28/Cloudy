@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.android.cloudy.R;
+import com.example.android.cloudy.data.model.remote.ForecastHolder;
 
 import java.util.ArrayList;
 
@@ -17,19 +18,27 @@ import java.util.ArrayList;
 
 public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHolder> {
 
-    private ArrayList<String> dataSet;
+    private ArrayList<ForecastHolder> dataSet;
 
-    public ForecastAdapter(ArrayList<String> dataSet) {
+    public ForecastAdapter(ArrayList<ForecastHolder> dataSet) {
         this.dataSet = dataSet;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public CardView cardView;
-        public TextView textView;
+        public CardView cardViewForFiveDayForecasts;
+        public TextView textViewDate;
+        public TextView textViewWind;
+        public TextView textViewMaxTemp;
+        public TextView textViewMinTemp;
+        public TextView textViewDescription;
         public ViewHolder(View v) {
             super(v);
-            cardView = (CardView) v.findViewById(R.id.forecast_card_view);
-            textView = (TextView) v.findViewById(R.id.five_day_forecast);
+            cardViewForFiveDayForecasts = (CardView) v.findViewById(R.id.forecast_card_view);
+            textViewDate = (TextView) v.findViewById(R.id.text_view_current_date);
+            textViewWind = (TextView) v.findViewById(R.id.text_view_wind);
+            textViewMinTemp = (TextView) v.findViewById(R.id.text_view_min_temp);
+            textViewMaxTemp = (TextView) v.findViewById(R.id.text_view_max_temp);
+            textViewDescription = (TextView) v.findViewById(R.id.text_view_description);
         }
     }
 
@@ -43,12 +52,17 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ForecastAdapter.ViewHolder holder, int position) {
-        holder.textView.setText(dataSet.get(position));
+        holder.textViewDate.setText(dataSet.get(position).getDate());
+        holder.textViewWind.setText(String.format("Wind speeds equal to %s", dataSet.get(position).getWind() + "mph"));
+        holder.textViewMinTemp.setText(String.format("Min temp %s", dataSet.get(position).getTempMin()));
+        holder.textViewMaxTemp.setText(String.format("Max temp %s", dataSet.get(position).getTempMax()));
+        holder.textViewDescription.setText(String.format("The Forecast is %s", dataSet.get(position).getDescription()));
+
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return dataSet.size();
     }
 
 }

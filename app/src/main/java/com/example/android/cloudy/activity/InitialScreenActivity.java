@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +21,7 @@ import com.example.android.cloudy.adpaters.ForecastAdapter;
 import com.example.android.cloudy.data.model.remote.CollectWeatherData;
 import com.example.android.cloudy.data.model.remote.DailyForecast;
 import com.example.android.cloudy.data.model.remote.ForecastCallback;
+import com.example.android.cloudy.data.model.remote.ForecastHolder;
 import com.example.android.cloudy.data.model.remote.WeatherCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -34,14 +34,11 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.R.color.black;
-import static com.example.android.cloudy.R.id.day;
-import static com.example.android.cloudy.R.id.forecast;
 
 public class InitialScreenActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -49,9 +46,9 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     Toolbar MyToolbar;
     @BindView(R.id.time)
     TextView TimeText;
-    @BindView(day)
+    @BindView(R.id.day)
     TextView CurrentDay;
-    @BindView(forecast)
+    @BindView(R.id.forecast)
     TextView weatherForecast;
     @BindView(R.id.location)
     TextView chosenLocation;
@@ -68,7 +65,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     private RecyclerView weatherRecyclerView;
     private RecyclerView.Adapter forecastAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    public ArrayList<String> fiveDayForecast;
+    public ArrayList<ForecastHolder> fiveDayForecast = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,21 +76,17 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
 
         MyToolbar.setTitleTextColor(getColor(R.color.menuItems));
         weatherRecyclerView.setHasFixedSize(true);
+        weatherRecyclerView.setAdapter(forecastAdapter);
 
         layoutManager = new LinearLayoutManager(this);
         weatherRecyclerView.setLayoutManager(layoutManager);
-
-        fiveDayForecast.add("3.04");
-        fiveDayForecast.add("4.54");
-        fiveDayForecast.add("34.87");
-
-        forecastAdapter = new ForecastAdapter(fiveDayForecast);
-        weatherRecyclerView.setAdapter(forecastAdapter);
 
         setSupportActionBar(MyToolbar);
         setCurrentTime();
         setCurrentDay();
         googleApiInit();
+        collectCurrentWeatherData();
+        collectFiveDayForecast();
 
         autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
@@ -182,8 +175,6 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         collectWeatherData.collectWeather(selectedPlace , new WeatherCallback() {
             @Override
             public void success(String description, double tempMin, double tempMax, double windInMph) {
-                forecastCardView.setVisibility(View.VISIBLE);
-
                 int minTempInCelcious = (int) (tempMin - 273.15);
                 int maxTempInCelcious = (int) (tempMax - 273.15);
 
@@ -240,8 +231,9 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     public void collectFiveDayForecast() {
         collectWeatherData.collectForecast(selectedPlace, new ForecastCallback() {
             @Override
-            public void success(List<DailyForecast> dailyForecasts) {
-
+            public void success(ArrayList<DailyForecast> dailyForecasts) {
+                forecastAdapter = new ForecastAdapter(getWindForecast(dailyForecasts));
+                weatherRecyclerView.setAdapter(forecastAdapter);
             }
 
             @Override
@@ -249,6 +241,26 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
                 Log.i("CHRIS", "Sorry there was an error displaying the weather");
             }
         });
+    }
+
+    private ArrayList<ForecastHolder> getWindForecast(ArrayList<DailyForecast> dailyForecasts) {
+        fiveDayForecast.clear();
+        for (int i = 0; i < dailyForecasts.size(); i++) {
+            long date = dailyForecasts.get(i).getDt();
+
+            String description = dailyForecasts.get(i).getWeather().get(0).getDescription();
+
+            double windForecast = dailyForecasts.get(i).getSpeed();
+
+            double tempMin = dailyForecasts.get(i).getTemp().getMin();
+            double tempMax = dailyForecasts.get(i).getTemp().getMax();
+
+            int minTempInCelcious = (int) (tempMin - 273.15);
+            int maxTempInCelcious = (int) (tempMax - 273.15);
+
+            fiveDayForecast.add(new ForecastHolder(date, description, windForecast, minTempInCelcious, maxTempInCelcious));
+        }
+        return fiveDayForecast;
     }
 
     @Override

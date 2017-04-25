@@ -1,6 +1,6 @@
 package com.example.android.cloudy.data.model.remote;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by ccu17 on 25/04/2017.
@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ForecastCallback {
 
-    void success(List<DailyForecast> dailyForecasts);
+    void success(ArrayList<DailyForecast> dailyForecasts);
 
     void failure(String failed);
 

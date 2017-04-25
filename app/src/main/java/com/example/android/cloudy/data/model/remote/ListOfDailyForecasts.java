@@ -3,7 +3,7 @@ package com.example.android.cloudy.data.model.remote;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by ccu17 on 25/04/2017.
@@ -13,9 +13,9 @@ public class ListOfDailyForecasts {
 
     @SerializedName("list")
     @Expose
-    private List<DailyForecast> list = null;
+    private ArrayList<DailyForecast> list = null;
 
-    public List<DailyForecast> getList() {
+    public ArrayList<DailyForecast> getList() {
         return list;
     }
 
