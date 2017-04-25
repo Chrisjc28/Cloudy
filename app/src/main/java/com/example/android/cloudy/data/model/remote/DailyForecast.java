@@ -7,7 +7,7 @@ package com.example.android.cloudy.data.model.remote;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class List {
+public class DailyForecast {
 
     @SerializedName("dt")
     @Expose

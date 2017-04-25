@@ -20,6 +20,8 @@ import android.widget.TextView;
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.adpaters.ForecastAdapter;
 import com.example.android.cloudy.data.model.remote.CollectWeatherData;
+import com.example.android.cloudy.data.model.remote.DailyForecast;
+import com.example.android.cloudy.data.model.remote.ForecastCallback;
 import com.example.android.cloudy.data.model.remote.WeatherCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,6 +34,7 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,7 +61,6 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     ImageView currentWeatherIcon;
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
-//    private CollectFiveDayForecast collectFiveDayForecast = new CollectFiveDayForecast();
     public PlaceAutocompleteFragment autocompleteFragment;
     public Menu menuOptions;
     public GoogleApiClient googleApiClient;
@@ -81,6 +83,10 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         layoutManager = new LinearLayoutManager(this);
         weatherRecyclerView.setLayoutManager(layoutManager);
 
+        fiveDayForecast.add("3.04");
+        fiveDayForecast.add("4.54");
+        fiveDayForecast.add("34.87");
+
         forecastAdapter = new ForecastAdapter(fiveDayForecast);
         weatherRecyclerView.setAdapter(forecastAdapter);
 
@@ -97,7 +103,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
                 selectedPlace = place.getName().toString();
                 chosenLocation.setText(place.getName().toString());
                 collectCurrentWeatherData();
-//                collectFiveDayForecast();
+                collectFiveDayForecast();
             }
 
             @Override
@@ -231,41 +237,19 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         });
     }
 
-//    public void collectFiveDayForecast() {
-//        collectWeatherData.collectForecast(selectedPlace, new ForecastCallback() {
-//            @Override
-//            public void success(TreeMap<String, ArrayList<ForecastListItem>> map) {
-//                Set<String> keys = map.keySet();
-//                for (String key : keys) {
-//                    List dayList = map.get(key);
-//
-//                }
-//
-//                Date todaysDate = new Date();
-//                DateTime dtOrg = new DateTime(todaysDate);
-//
-//                for (int i = 0; i < 5; i++) {
-//                    DateTime dtPlusOne = dtOrg.plusDays(1);
-//
-//                    SimpleDateFormat sdf = new SimpleDateFormat("dd MM yyyy");
-//                    String day = sdf.format(dtPlusOne.toDate());
-//
-//                    ArrayList<ForecastListItem> requiredDateForecast = map.get(day);
-//                    float averageWind = getAverageWind(requiredDateForecast);
-////                    float averageTemp = getAverageTemp
-//                }
-//            }
-//
-//            @Override
-//            public void failure(String failed) {
-//                Log.i("CHRIS", "Sorry there was an error displaying the weather");
-//            }
-//        });
-//    }
+    public void collectFiveDayForecast() {
+        collectWeatherData.collectForecast(selectedPlace, new ForecastCallback() {
+            @Override
+            public void success(List<DailyForecast> dailyForecasts) {
 
-//    private float getAverageWind(ArrayList<ForecastListItem> forecastListItems) {
-//        //
-//    }
+            }
+
+            @Override
+            public void failure(String failed) {
+                Log.i("CHRIS", "Sorry there was an error displaying the weather");
+            }
+        });
+    }
 
     @Override
     protected void onResume() {

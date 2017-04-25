@@ -85,7 +85,11 @@ public class CollectWeatherData implements WeatherDAO {
         request.getAsJSONObject(new JSONObjectRequestListener() {
             @Override
             public void onResponse(JSONObject response) {
-                jsonParsing(response, cb);
+                try {
+                    jsonParsing(response, cb);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -97,38 +101,10 @@ public class CollectWeatherData implements WeatherDAO {
     }
 
 
-    public void jsonParsing(JSONObject response, final ForecastCallback cb) {
-
-        Gson gson = new Gson();
-
-        String GsonString = response.toString();
-
-//        Forecast forecastList = gson.fromJson(GsonString, Forecast.class);
-//
-//        ArrayList<ForecastListItem> forecastListItems = forecastList.getList();
-//
-//        cb.success(getForecastInDays(forecastListItems));
+    public void jsonParsing(JSONObject response, final ForecastCallback cb) throws JSONException {
+        ListOfDailyForecasts dailyForecast = new Gson().fromJson(response.toString(), ListOfDailyForecasts.class);
+        cb.success(dailyForecast.getList());
 
     }
 
-//    private TreeMap<String, ArrayList<ForecastListItem>> getForecastInDays(ArrayList<ForecastListItem> originalForecastList) {
-//        TreeMap<String, ArrayList<ForecastListItem>> dateFilteredForecast = new TreeMap<>();
-//        //this is to pull the day out of the date
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd MM yyyy");
-//        String day = sdf.format(originalForecastList.get(0).getDate());
-//
-//        ArrayList<ForecastListItem> forecastForDay = new ArrayList<>();
-//
-//        for (ForecastListItem item : originalForecastList) {
-//            if (sdf.format(item.getDate()).equals(day)) { //in the same day but later forecast
-//                forecastForDay.add(item);
-//            } else {
-//                dateFilteredForecast.put(day, forecastForDay);
-//                day = sdf.format(item.getDate());
-//                forecastForDay = new ArrayList<>();
-//                forecastForDay.add(item);
-//            }
-//        }
-//        return dateFilteredForecast;
-//    }
 }
