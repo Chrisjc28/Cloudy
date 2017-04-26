@@ -3,20 +3,26 @@ package com.example.android.cloudy.activity;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.cloudy.R;
-import com.example.android.cloudy.data.model.remote.CollectCurrentWeather;
+import com.example.android.cloudy.adpaters.ForecastAdapter;
+import com.example.android.cloudy.data.model.remote.CollectWeatherData;
+import com.example.android.cloudy.data.model.remote.DailyForecast;
+import com.example.android.cloudy.data.model.remote.ForecastCallback;
+import com.example.android.cloudy.data.model.remote.ForecastHolder;
 import com.example.android.cloudy.data.model.remote.WeatherCallback;
-import com.example.android.cloudy.fragments.WeatherFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -26,14 +32,15 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class InitialScreenActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+import static android.R.color.black;
 
-    WeatherFragment weatherFragment = new WeatherFragment();
+public class InitialScreenActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     @BindView(R.id.my_toolbar)
     Toolbar MyToolbar;
@@ -41,54 +48,57 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     TextView TimeText;
     @BindView(R.id.day)
     TextView CurrentDay;
-    @BindView(R.id.refresh_icon)
-    ImageView refreshIcon;
-    @BindView(R.id.updated_time)
-    TextView lastUpdated;
     @BindView(R.id.forecast)
     TextView weatherForecast;
+    @BindView(R.id.location)
+    TextView chosenLocation;
+    @BindView(R.id.current_forecast_card_view)
+    CardView forecastCardView;
+    @BindView(R.id.current_weather_icon)
+    ImageView currentWeatherIcon;
 
-    private CollectCurrentWeather collectCurrentWeather = new CollectCurrentWeather();
-
+    private CollectWeatherData collectWeatherData = new CollectWeatherData();
     public PlaceAutocompleteFragment autocompleteFragment;
     public Menu menuOptions;
-    public GoogleApiClient mGoogleApiClient;
+    public GoogleApiClient googleApiClient;
+
     public String selectedPlace;
+    private RecyclerView weatherRecyclerView;
+    private RecyclerView.Adapter forecastAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+    public ArrayList<ForecastHolder> fiveDayForecast = new ArrayList<>();
 
-
-    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial_screen);
+        weatherRecyclerView = (RecyclerView) findViewById(R.id.weather_recycler_view);
         ButterKnife.bind(this);
 
         MyToolbar.setTitleTextColor(getColor(R.color.menuItems));
+        weatherRecyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(this);
+        weatherRecyclerView.setLayoutManager(layoutManager);
+
 
         setSupportActionBar(MyToolbar);
         setCurrentTime();
         setCurrentDay();
-        setLastUpdated();
-        refreshData();
+        googleApiInit();
+        collectCurrentWeatherData();
+        collectFiveDayForecast();
 
         autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                Log.i("CHRIS", "Place: " + place.getName());
                 selectedPlace = place.getName().toString();
-                collectCurrentWeather.collectCurrentWeather(selectedPlace , new WeatherCallback() {
-                    @Override
-                    public void success(String description, double temp) {
-                        int tempInCelcious = (int) (temp - 273.15);
-                        weatherForecast.setText(description + " " + tempInCelcious);
-                    }
-
-                    @Override
-                    public void failure(String failed) {
-                        Log.i("CHRIS", "Sorry there was an error displaying the weather");
-                    }
-                });
+                chosenLocation.setText(place.getName().toString());
+                collectCurrentWeatherData();
+                collectFiveDayForecast();
             }
 
             @Override
@@ -96,16 +106,18 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
                 Log.i("CHRIS", "An error occurred: " + status);
             }
         });
+    }
 
+    @Override
+    protected void onStart() {
+        googleApiClient.connect();
+        super.onStart();
+    }
 
-
-        mGoogleApiClient = new GoogleApiClient
-                .Builder(this)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(this, this)
-                .build();
-
+    @Override
+    protected void onStop() {
+        googleApiClient.disconnect();
+        super.onStop();
     }
 
     @SuppressLint("NewApi")
@@ -136,6 +148,15 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         Log.i("CHRIS", "onConnectionFailed: connection failed");
     }
 
+    public void googleApiInit() {
+        googleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
+    }
+
     public void setCurrentTime() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("HH:mm");
@@ -143,12 +164,6 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         TimeText.setText(currentDateTimeString);
     }
 
-    public void setLastUpdated() {
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-        String lastUpDated = df.format(c.getTime());
-        lastUpdated.setText("Last updated " + lastUpDated);
-    }
 
     public void setCurrentDay() {
         Calendar c = Calendar.getInstance();
@@ -157,12 +172,111 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         CurrentDay.setText(currentDateTimeString);
     }
 
-    public void refreshData() {
-        refreshIcon.setOnClickListener(new View.OnClickListener() {
+
+    public void collectCurrentWeatherData() {
+        collectWeatherData.collectWeather(selectedPlace , new WeatherCallback() {
             @Override
-            public void onClick(View v) {
-                setLastUpdated();
+            public void success(String description, double tempMin, double tempMax, double windInMph) {
+                int minTempInCelcious = (int) (tempMin - 273.15);
+                int maxTempInCelcious = (int) (tempMax - 273.15);
+
+                //todo: Add more option to switch statement
+
+                switch (description) {
+                    case "clear sky":
+                        currentWeatherIcon.setImageResource(R.drawable.sunny);
+                        break;
+                    case "mist":
+                        currentWeatherIcon.setImageResource(R.drawable.mist);
+                        break;
+                    case "few clouds":
+                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
+                        break;
+                    case "scattered clouds":
+                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
+                        break;
+                    case "overcast clouds":
+                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
+                        break;
+                    case "heavy intensity rain":
+                        currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
+                    case "light intensity shower rain":
+                        currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
+                    case "shower rain":
+                        currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
+                    case "light rain":
+                        currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
+                    default:
+                        currentWeatherIcon.setImageResource(R.drawable.sunny);
+                        break;
+                }
+
+                weatherForecast.setTextColor(getResources().getColor(black));
+                weatherForecast.setText("The Weather forecast for today is " + description + "."
+                        + "\nThe Minimum temp is " + minTempInCelcious + "°C"
+                        + " & Maximum temp is " + maxTempInCelcious + "°C."
+                + "\nWind speed is " + windInMph + "mph");
+
+            }
+
+            @Override
+            public void failure(String failed) {
+                Log.i("CHRIS", "Sorry there was an error displaying the weather");
             }
         });
+    }
+
+    public void collectFiveDayForecast() {
+        collectWeatherData.collectForecast(selectedPlace, new ForecastCallback() {
+            @Override
+            public void success(ArrayList<DailyForecast> dailyForecasts) {
+                forecastAdapter = new ForecastAdapter(getWindForecast(dailyForecasts));
+                weatherRecyclerView.setAdapter(forecastAdapter);
+            }
+
+            @Override
+            public void failure(String failed) {
+                Log.i("CHRIS", "Sorry there was an error displaying the weather");
+            }
+        });
+    }
+
+    private ArrayList<ForecastHolder> getWindForecast(ArrayList<DailyForecast> dailyForecasts) {
+        fiveDayForecast.clear();
+        for (int i = 0; i < dailyForecasts.size(); i++) {
+            long date = dailyForecasts.get(i).getDt();
+
+            String description = dailyForecasts.get(i).getWeather().get(0).getDescription();
+
+            double windForecast = dailyForecasts.get(i).getSpeed();
+
+            double tempMin = dailyForecasts.get(i).getTemp().getMin();
+            double tempMax = dailyForecasts.get(i).getTemp().getMax();
+
+            int minTempInCelcious = (int) (tempMin - 273.15);
+            int maxTempInCelcious = (int) (tempMax - 273.15);
+
+            fiveDayForecast.add(new ForecastHolder(date, description, windForecast, minTempInCelcious, maxTempInCelcious));
+        }
+        return fiveDayForecast;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 }
