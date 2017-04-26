@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,9 +19,11 @@ import com.example.android.cloudy.adpaters.ViewPagerAdapter;
 import com.example.android.cloudy.fragments.CurrentForecastFragment;
 import com.example.android.cloudy.fragments.FavouriteFragment;
 import com.example.android.cloudy.fragments.GoogleMapsFragment;
+import com.example.android.cloudy.fragments.PlaceSelected;
 import com.example.android.cloudy.fragments.WeeklyForecastFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Place;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -107,5 +110,13 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     @Override
     public void onConnectionSuspended(int i) {
 
+    }
+
+    public void placeSelected(Place place) {
+        for (Fragment f : getSupportFragmentManager().getFragments()){
+            if (f instanceof PlaceSelected) {
+                ((PlaceSelected) f).placeSelected(place);
+            }
+        }
     }
 }

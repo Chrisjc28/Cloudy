@@ -15,6 +15,7 @@ import com.example.android.cloudy.data.model.remote.CollectWeatherData;
 import com.example.android.cloudy.data.model.remote.DailyForecast;
 import com.example.android.cloudy.data.model.remote.ForecastCallback;
 import com.example.android.cloudy.data.model.remote.ForecastHolder;
+import com.google.android.gms.location.places.Place;
 
 import java.util.ArrayList;
 
@@ -24,16 +25,15 @@ import butterknife.ButterKnife;
  * Created by ccu17 on 26/04/2017.
  */
 
-public class WeeklyForecastFragment extends Fragment {
+public class WeeklyForecastFragment extends Fragment implements PlaceSelected {
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
 
-    public String selectedPlace = "Leeds";
+    public String selectedPlace;
     private RecyclerView weatherRecyclerView;
     private RecyclerView.Adapter forecastAdapter;
     private RecyclerView.LayoutManager layoutManager;
     public ArrayList<ForecastHolder> fiveDayForecast = new ArrayList<>();
-
 
     public WeeklyForecastFragment() {
         // Required empty public constructor
@@ -54,13 +54,11 @@ public class WeeklyForecastFragment extends Fragment {
         forecastAdapter = new ForecastAdapter(fiveDayForecast);
         weatherRecyclerView.setAdapter(forecastAdapter);
 
-        collectFiveDayForecast();
-
         return view;
 
     }
 
-    public void collectFiveDayForecast() {
+    public void CollectFiveDayForecast() {
         collectWeatherData.collectForecast(selectedPlace, new ForecastCallback() {
             @Override
             public void success(ArrayList<DailyForecast> dailyForecasts) {
@@ -94,5 +92,11 @@ public class WeeklyForecastFragment extends Fragment {
             fiveDayForecast.add(new ForecastHolder(date, description, windForecast, minTempInCelcious, maxTempInCelcious));
         }
         return fiveDayForecast;
+    }
+
+    @Override
+    public void placeSelected(Place place) {
+        selectedPlace = place.getName().toString();
+        CollectFiveDayForecast();
     }
 }

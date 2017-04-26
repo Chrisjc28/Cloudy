@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.cloudy.R;
+import com.example.android.cloudy.activity.InitialScreenActivity;
 import com.example.android.cloudy.data.model.remote.CollectWeatherData;
 import com.example.android.cloudy.data.model.remote.WeatherCallback;
 import com.google.android.gms.common.ConnectionResult;
@@ -78,14 +79,18 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         setCurrentDay();
         googleApiInit();
 
+
         autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+
             @Override
             public void onPlaceSelected(Place place) {
                 selectedPlace = place.getName().toString();
                 chosenLocation.setText(place.getName().toString());
                 collectCurrentWeatherData();
+
+                ((InitialScreenActivity)getActivity()).placeSelected(place);
             }
 
             @Override
@@ -140,7 +145,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
             public void success(String description, double tempMin, double tempMax, double windInMph) {
                 int minTempInCelcious = (int) (tempMin - 273.15);
                 int maxTempInCelcious = (int) (tempMax - 273.15);
-                
+
                 switch (description) {
                     case "clear sky":
                         currentWeatherIcon.setImageResource(R.drawable.sunny);
