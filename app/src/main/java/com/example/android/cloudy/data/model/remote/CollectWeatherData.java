@@ -77,6 +77,7 @@ public class CollectWeatherData implements WeatherDAO {
         ANRequest request = AndroidNetworking.get(BASE_URL)
                 .addPathParameter("uri", "forecast/daily")
                 .addQueryParameter("q", citySearch)
+                .addQueryParameter("units", "metric")
                 .addQueryParameter("appid", API_KEY)
                 .setPriority(Priority.LOW)
                 .build();
