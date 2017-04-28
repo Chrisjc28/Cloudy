@@ -62,8 +62,8 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
 
     public void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new CurrentForecastFragment(), "Daily");
-        adapter.addFragment(new WeeklyForecastFragment(), "Weekly");
+        adapter.addFragment(new CurrentForecastFragment(), "Current");
+        adapter.addFragment(new WeeklyForecastFragment(), "Daily");
         adapter.addFragment(new GoogleMapsFragment(), "Google maps");
         adapter.addFragment(new FavouriteFragment(), "Favourites");
         viewPager.setAdapter(adapter);

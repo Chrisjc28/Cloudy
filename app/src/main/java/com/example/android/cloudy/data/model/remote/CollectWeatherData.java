@@ -7,6 +7,7 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.example.android.cloudy.data.model.remote.pojos.ListOfDailyForecasts;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;

@@ -28,8 +28,8 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
         public CardView cardViewForFiveDayForecasts;
         public TextView textViewDate;
         public TextView textViewWind;
-        public TextView textViewMaxTemp;
         public TextView textViewMinTemp;
+        public TextView textViewMaxTemp;
         public TextView textViewDescription;
         public ViewHolder(View v) {
             super(v);

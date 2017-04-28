@@ -1,4 +1,4 @@
-package com.example.android.cloudy.data.model.remote;
+package com.example.android.cloudy.data.model.remote.pojos;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

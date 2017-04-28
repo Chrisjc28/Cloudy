@@ -27,7 +27,7 @@
         android:id="@+id/current_forecast_card_view"
         android:layout_gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="260dp"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -43,6 +43,7 @@
                 android:id="@+id/location"
                 android:textSize="50sp"
                 android:text="Leeds"
+                android:layout_margin="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -54,6 +55,7 @@
                 <TextView
                     android:id="@+id/day"
                     android:textSize="20sp"
+                    android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
@@ -61,6 +63,7 @@
                 <TextView
                     android:id="@+id/time"
                     android:textSize="20sp"
+                    android:layout_margin="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -76,6 +79,7 @@
                     android:textSize="15sp"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:layout_margin="10dp"
                     android:layout_height="match_parent" />
 
                 <ImageView

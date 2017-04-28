@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.adpaters.ForecastAdapter;
 import com.example.android.cloudy.data.model.remote.CollectWeatherData;
-import com.example.android.cloudy.data.model.remote.DailyForecast;
+import com.example.android.cloudy.data.model.remote.pojos.DailyForecast;
 import com.example.android.cloudy.data.model.remote.ForecastCallback;
 import com.example.android.cloudy.data.model.remote.ForecastHolder;
 import com.google.android.gms.location.places.Place;
@@ -89,7 +89,7 @@ public class WeeklyForecastFragment extends Fragment implements PlaceSelected {
             int minTempInCelcious = (int) (tempMin);
             int maxTempInCelcious = (int) (tempMax);
 
-            fiveDayForecast.add(new ForecastHolder(date, description, windForecast, minTempInCelcious, maxTempInCelcious));
+            fiveDayForecast.add(new ForecastHolder(date, description, maxTempInCelcious, minTempInCelcious, windForecast));
         }
         return fiveDayForecast;
     }

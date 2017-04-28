@@ -1,5 +1,7 @@
 package com.example.android.cloudy.data.model.remote;
 
+import com.example.android.cloudy.data.model.remote.pojos.DailyForecast;
+
 import java.util.ArrayList;
 
 /**
