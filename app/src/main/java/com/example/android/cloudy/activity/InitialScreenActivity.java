@@ -38,6 +38,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     public Menu menuOptions;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    public String selectedPlace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     }
 
     public void placeSelected(Place place) {
+        this.selectedPlace = place.getAddress().toString();
         for (Fragment f : getSupportFragmentManager().getFragments()){
             if (f instanceof PlaceSelected) {
                 ((PlaceSelected) f).placeSelected(place);
