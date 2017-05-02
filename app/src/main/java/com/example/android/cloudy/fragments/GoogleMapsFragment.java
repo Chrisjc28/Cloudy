@@ -17,12 +17,6 @@ import butterknife.ButterKnife;
 public class GoogleMapsFragment extends Fragment {
 
     public GoogleMapsFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
