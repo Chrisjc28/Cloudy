@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -56,6 +57,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     public PlaceAutocompleteFragment autocompleteFragment;
     public Menu menuOptions;
     public GoogleApiClient googleApiClient;
+    private static View view;
 
     public String selectedPlace;
 
@@ -69,35 +71,43 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_current_forecast, container, false);
-        ButterKnife.bind(this, view);
-
-        setCurrentTime();
-        setCurrentDay();
-        googleApiInit();
-
-
-        autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-
-            @Override
-            public void onPlaceSelected(Place place) {
-                selectedPlace = place.getName().toString();
-                chosenLocation.setText(place.getName().toString());
-                collectCurrentWeatherData();
-
-                ((InitialScreenActivity)getActivity()).placeSelected(place);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (view != null) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null) {
+                parent.removeView(view);
             }
+        }
+        try {
+            view = inflater.inflate(R.layout.fragment_current_forecast, container, false);
+            ButterKnife.bind(this, view);
 
-            @Override
-            public void onError(Status status) {
-                Log.i("CHRIS", "An error occurred: " + status);
-            }
-        });
+            setCurrentTime();
+            setCurrentDay();
+            googleApiInit();
+
+            autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+
+                @Override
+                public void onPlaceSelected(Place place) {
+                    selectedPlace = place.getName().toString();
+                    chosenLocation.setText(place.getName().toString());
+                    collectCurrentWeatherData();
+
+                    ((InitialScreenActivity)getActivity()).placeSelected(place);
+                }
+
+                @Override
+                public void onError(Status status) {
+                    Log.i("CHRIS", "An error occurred: " + status);
+                }
+            });
+
+        } catch (InflateException e) {
+            Log.i("CHRIS", "onCreateView: " + e);
+        }
 
         return view;
     }
