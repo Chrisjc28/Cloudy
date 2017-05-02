@@ -5,16 +5,24 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.android.cloudy.R;
+import com.google.android.gms.location.places.Place;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * Created by ccu17 on 26/04/2017.
  */
 
-public class FavouriteFragment extends Fragment {
+public class FavouriteFragment extends Fragment implements PlaceSelected {
+
+    private String selectedPlace;
+
+    @BindView(R.id.fav)
+    TextView favourites;
 
     public FavouriteFragment() {
         // Required empty public constructor
@@ -31,6 +39,12 @@ public class FavouriteFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_favourite_forecasts, container, false);
         ButterKnife.bind(this, view);
+        favourites.setText(selectedPlace);
         return view;
+    }
+
+    @Override
+    public void placeSelected(Place place) {
+        selectedPlace = place.getName().toString();
     }
 }
