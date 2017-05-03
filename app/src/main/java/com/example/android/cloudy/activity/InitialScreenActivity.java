@@ -18,6 +18,7 @@ import com.example.android.cloudy.R;
 import com.example.android.cloudy.adpaters.ViewPagerAdapter;
 import com.example.android.cloudy.fragments.CurrentForecastFragment;
 import com.example.android.cloudy.fragments.FavouriteFragment;
+import com.example.android.cloudy.fragments.GoogleMapsFragment;
 import com.example.android.cloudy.fragments.PlaceSelected;
 import com.example.android.cloudy.fragments.WeeklyForecastFragment;
 import com.google.android.gms.common.ConnectionResult;
@@ -38,6 +39,8 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     private TabLayout tabLayout;
     private ViewPager viewPager;
     public String selectedPlace;
+
+    private static final int TAB_COUNT = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +67,9 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new CurrentForecastFragment(), "Current");
         adapter.addFragment(new WeeklyForecastFragment(), "Daily");
-//        adapter.addFragment(new GoogleMapsFragment(), "Google maps");
+        adapter.addFragment(new GoogleMapsFragment(), "Maps");
         adapter.addFragment(new FavouriteFragment(), "Favourites");
+        viewPager.setOffscreenPageLimit(TAB_COUNT + 1);
         viewPager.setAdapter(adapter);
     }
 

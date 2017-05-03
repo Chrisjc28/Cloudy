@@ -8,8 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.android.cloudy.R;
-import com.example.android.cloudy.activity.InitialScreenActivity;
 import com.google.android.gms.location.places.Place;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,9 +19,11 @@ import butterknife.ButterKnife;
  * Created by ccu17 on 26/04/2017.
  */
 
-public class FavouriteFragment extends Fragment implements PlaceSelected {
+public class FavouriteFragment extends Fragment implements PlaceSelected{
 
-    public String selectedPlace;
+//    public String selectedPlace;
+
+    ArrayList<String> chosenFavourites;
 
     @BindView(R.id.fav)
     TextView favourites;
@@ -41,14 +44,15 @@ public class FavouriteFragment extends Fragment implements PlaceSelected {
         View view = inflater.inflate(R.layout.fragment_favourite_forecasts, container, false);
         ButterKnife.bind(this, view);
 
-        this.selectedPlace = ((InitialScreenActivity)getActivity()).selectedPlace;
-        favourites.setText(selectedPlace);
+//        this.selectedPlace = ((InitialScreenActivity)getActivity()).selectedPlace;
+//        favourites.setText(selectedPlace);
         return view;
     }
 
     @Override
     public void placeSelected(Place place) {
-        selectedPlace = place.getName().toString();
+//        chosenFavourites.add(place.getAddress().toString());
+//        favourites.setText(chosenFavourites.indexOf(0));
     }
 
 }

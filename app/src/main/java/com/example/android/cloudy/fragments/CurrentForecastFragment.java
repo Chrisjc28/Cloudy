@@ -2,17 +2,21 @@ package com.example.android.cloudy.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.util.Log;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.activity.InitialScreenActivity;
@@ -23,8 +27,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -52,9 +56,11 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     CardView forecastCardView;
     @BindView(R.id.current_weather_icon)
     ImageView currentWeatherIcon;
+    @BindView(R.id.favourites)
+    Button addFavourites;
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
-    public PlaceAutocompleteFragment autocompleteFragment;
+    public SupportPlaceAutocompleteFragment autocompleteFragment;
     public Menu menuOptions;
     public GoogleApiClient googleApiClient;
     private static View view;
@@ -72,21 +78,33 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (view != null) {
-            ViewGroup parent = (ViewGroup) view.getParent();
-            if (parent != null) {
-                parent.removeView(view);
+
+        view = inflater.inflate(R.layout.fragment_current_forecast, container, false);
+        ButterKnife.bind(this, view);
+
+        setCurrentTime();
+        setCurrentDay();
+
+        googleApiInit();
+
+        addFavourites.setText(R.string.add_fav);
+
+        addFavourites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "I was pressed" ,Toast.LENGTH_LONG).show();
             }
-        }
-        try {
-            view = inflater.inflate(R.layout.fragment_current_forecast, container, false);
-            ButterKnife.bind(this, view);
+        });
 
-            setCurrentTime();
-            setCurrentDay();
-            googleApiInit();
+        return view;
+    }
 
-            autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (autocompleteFragment == null) {
+            autocompleteFragment = new SupportPlaceAutocompleteFragment();
 
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
 
@@ -105,11 +123,14 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                 }
             });
 
-        } catch (InflateException e) {
-            Log.i("CHRIS", "onCreateView: " + e);
+            FragmentManager fm = getChildFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+
+            ft.add(R.id.place_autocomplete_fragment, autocompleteFragment);
+            ft.commit();
+            fm.executePendingTransactions();
         }
 
-        return view;
     }
 
     @Override
@@ -153,8 +174,8 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         collectWeatherData.collectWeather(selectedPlace , new WeatherCallback() {
             @Override
             public void success(String description, double tempMin, double tempMax, double windInMph) {
-                int minTempInCelcious = (int) (tempMin - 273.15);
-                int maxTempInCelcious = (int) (tempMax - 273.15);
+                int minTempInCelcious = (int) (tempMin);
+                int maxTempInCelcious = (int) (tempMax);
 
                 switch (description) {
                     case "clear sky":

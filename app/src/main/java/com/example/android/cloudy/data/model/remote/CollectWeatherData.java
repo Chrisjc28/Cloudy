@@ -8,9 +8,9 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.example.android.cloudy.data.model.remote.pojos.ListOfDailyForecasts;
+import com.example.android.cloudy.data.model.remote.pojos.WeatherResponse;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,6 +32,7 @@ public class CollectWeatherData implements WeatherDAO {
         ANRequest request = AndroidNetworking.get(BASE_URL)
                 .addPathParameter("uri", "weather")
                 .addQueryParameter("q", citySearch)
+                .addQueryParameter("units", "metric")
                 .addQueryParameter("appid", API_KEY)
                 .setPriority(Priority.LOW)
                 .build();
@@ -50,23 +51,16 @@ public class CollectWeatherData implements WeatherDAO {
 
     }
 
+
     public void jsonParsing(JSONObject response ,final WeatherCallback cb) {
-        try {
-            JSONArray weather = response.getJSONArray("weather");
-            String description = "";
-            for (int i = 0; i < weather.length(); i++) {
-                description = weather.getJSONObject(i).getString("description");
-            }
-            JSONObject main = response.getJSONObject("main");
-            double tempMin = Double.parseDouble(main.getString("temp_min"));
-            double tempMax = Double.parseDouble(main.getString("temp_max"));
-            JSONObject wind = response.getJSONObject("wind");
-            double windInMph = Double.parseDouble(wind.getString("speed"));
-            cb.success(description, tempMin, tempMax, windInMph);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            cb.failure("Failed");
-        }
+        WeatherResponse weatherResponse = new Gson().fromJson(response.toString(), WeatherResponse.class);
+
+        String weather = weatherResponse.weather[0].getDescription();
+        double tempMin = weatherResponse.main.getTempMin();
+        double tempMax = weatherResponse.main.getTempMax();
+        double wind =  weatherResponse.wind.getSpeed();
+
+        cb.success(weather, tempMin, tempMax, wind);
     }
 
     @Override
