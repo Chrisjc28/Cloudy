@@ -1,6 +1,5 @@
-package com.example.android.cloudy.data.model.remote;
+package com.example.android.cloudy.data.model.remote.pojos;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 public class ListOfDailyForecasts {
 
     @SerializedName("list")
-    @Expose
     private ArrayList<DailyForecast> list = null;
 
     public ArrayList<DailyForecast> getList() {

@@ -1,4 +1,4 @@
-package com.example.android.cloudy.data.model.remote;
+package com.example.android.cloudy.data.model.remote.pojos;
 
 /**
  * Created by ccu17 on 25/04/2017.

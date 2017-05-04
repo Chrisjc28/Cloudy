@@ -1,6 +1,5 @@
-package com.example.android.cloudy.data.model.remote;
+package com.example.android.cloudy.data.model.remote.pojos;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -10,23 +9,21 @@ import com.google.gson.annotations.SerializedName;
 public class Temp {
 
     @SerializedName("day")
-    @Expose
-    private Double day;
+    private double day;
+
     @SerializedName("min")
-    @Expose
-    private Double min;
+    private double min;
+
     @SerializedName("max")
-    @Expose
-    private Double max;
+    private double max;
+
     @SerializedName("night")
-    @Expose
-    private Double night;
+    private double night;
+
     @SerializedName("eve")
-    @Expose
-    private Double eve;
+    private double eve;
     @SerializedName("morn")
-    @Expose
-    private Double morn;
+    private double morn;
 
     public Double getDay() {
         return day;
@@ -36,19 +33,19 @@ public class Temp {
         this.day = day;
     }
 
-    public Double getMin() {
+    public double getMin() {
         return min;
     }
 
-    public void setMin(Double min) {
+    public void setMin(double min) {
         this.min = min;
     }
 
-    public Double getMax() {
+    public double getMax() {
         return max;
     }
 
-    public void setMax(Double max) {
+    public void setMax(double max) {
         this.max = max;
     }
 
