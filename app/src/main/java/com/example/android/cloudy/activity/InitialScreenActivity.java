@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.adpaters.ViewPagerAdapter;
 import com.example.android.cloudy.fragments.CurrentForecastFragment;
-import com.example.android.cloudy.fragments.FavouriteFragment;
 import com.example.android.cloudy.fragments.GoogleMapsFragment;
 import com.example.android.cloudy.fragments.PlaceSelected;
 import com.example.android.cloudy.fragments.WeeklyForecastFragment;
@@ -34,13 +33,12 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
 
     @BindView(R.id.my_toolbar)
     Toolbar MyToolbar;
-
     public Menu menuOptions;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     public String selectedPlace;
 
-    private static final int TAB_COUNT = 4;
+    private static final int TAB_COUNT = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +59,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         setSupportActionBar(MyToolbar);
 
         currentForecastFragment.newInstance();
+
     }
 
     public void setupViewPager(ViewPager viewPager) {
@@ -68,7 +67,6 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         adapter.addFragment(new CurrentForecastFragment(), "Current");
         adapter.addFragment(new WeeklyForecastFragment(), "Daily");
         adapter.addFragment(new GoogleMapsFragment(), "Maps");
-        adapter.addFragment(new FavouriteFragment(), "Favourites");
         viewPager.setOffscreenPageLimit(TAB_COUNT + 1);
         viewPager.setAdapter(adapter);
     }

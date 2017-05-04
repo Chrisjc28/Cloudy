@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.activity.InitialScreenActivity;
@@ -46,11 +45,11 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     TextView CurrentDay;
     @BindView(R.id.description)
     TextView weatherDescription;
-    @BindView(R.id.minTemp)
+    @BindView(R.id.min_temp)
     TextView currentMinTemp;
-    @BindView(R.id.maxTemp)
+    @BindView(R.id.max_temp)
     TextView currentMaxTemp;
-    @BindView(R.id.windSpeed)
+    @BindView(R.id.wind_speed)
     TextView windSpeed;
     @BindView(R.id.location)
     TextView chosenLocation;
@@ -60,6 +59,10 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     ImageView currentWeatherIcon;
     @BindView(R.id.favourites)
     Button addFavourites;
+    @BindView(R.id.favourites_card_view)
+    CardView selectedFavourites;
+    @BindView(R.id.added_favourites)
+    TextView textViewAddFavourites;
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
     public SupportPlaceAutocompleteFragment autocompleteFragment;
@@ -88,12 +91,16 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
         googleApiInit();
 
+        selectedFavourites.setVisibility(View.INVISIBLE);
+
         addFavourites.setText(R.string.add_fav);
 
         addFavourites.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "I was pressed" ,Toast.LENGTH_LONG).show();
+                selectedFavourites.setVisibility(View.VISIBLE);
+                textViewAddFavourites.setText(selectedPlace);
+
             }
         });
 
@@ -199,6 +206,9 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                         break;
                     case "light rain":
                         currentWeatherIcon.setImageResource(R.drawable.rain);
+                        break;
+                    case "haze":
+                        currentWeatherIcon.setImageResource(R.drawable.mist);
                         break;
                     default:
                         currentWeatherIcon.setImageResource(R.drawable.sunny);
