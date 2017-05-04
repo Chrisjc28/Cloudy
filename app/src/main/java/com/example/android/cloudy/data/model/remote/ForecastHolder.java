@@ -33,8 +33,8 @@ public class ForecastHolder {
         return String.valueOf(formatted);
     }
 
-    public String getWind() {
-        return String.valueOf(wind);
+    public Double getWind() {
+        return wind;
     }
 
     public String getTempMax() {
