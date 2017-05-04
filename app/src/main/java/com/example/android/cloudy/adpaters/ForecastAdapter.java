@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.cloudy.R;
@@ -31,6 +32,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
         public TextView textViewMinTemp;
         public TextView textViewMaxTemp;
         public TextView textViewDescription;
+        public ImageView weeklyForecastIcon;
         public ViewHolder(View v) {
             super(v);
             cardViewForFiveDayForecasts = (CardView) v.findViewById(R.id.forecast_card_view);
@@ -39,6 +41,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
             textViewMinTemp = (TextView) v.findViewById(R.id.text_view_min_temp);
             textViewMaxTemp = (TextView) v.findViewById(R.id.text_view_max_temp);
             textViewDescription = (TextView) v.findViewById(R.id.text_view_description);
+            weeklyForecastIcon = (ImageView) v.findViewById(R.id.weekly_forecastIcon);
         }
     }
 
@@ -57,6 +60,45 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
         holder.textViewMinTemp.setText(String.format("Min temp %s", dataSet.get(position).getTempMin()));
         holder.textViewMaxTemp.setText(String.format("Max temp %s", dataSet.get(position).getTempMax()));
         holder.textViewDescription.setText(String.format("The Forecast is %s", dataSet.get(position).getDescription()));
+
+        switch (String.valueOf(holder.textViewDescription)) {
+            case "cloudy":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.cloudy);
+                break;
+            case "clear sky":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.sunny);
+                break;
+            case "mist":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.mist);
+                break;
+            case "few clouds":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.cloudy);
+                break;
+            case "scattered clouds":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.cloudy);
+                break;
+            case "overcast clouds":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.cloudy);
+                break;
+            case "heavy intensity rain":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.rain);
+                break;
+            case "light intensity shower rain":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.rain);
+                break;
+            case "shower rain":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.rain);
+                break;
+            case "light rain":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.rain);
+                break;
+            case "moderate rain":
+                holder.weeklyForecastIcon.setImageResource(R.drawable.rain);
+                break;
+            default:
+                holder.weeklyForecastIcon.setImageResource(R.drawable.cloudy);
+                break;
+        }
 
     }
 

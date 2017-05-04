@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.adpaters.ForecastAdapter;
 import com.example.android.cloudy.data.model.remote.CollectWeatherData;
-import com.example.android.cloudy.data.model.remote.pojos.DailyForecast;
 import com.example.android.cloudy.data.model.remote.ForecastCallback;
 import com.example.android.cloudy.data.model.remote.ForecastHolder;
+import com.example.android.cloudy.data.model.remote.pojos.DailyForecast;
 import com.google.android.gms.location.places.Place;
 
 import java.util.ArrayList;

@@ -182,6 +182,9 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                     case "scattered clouds":
                         currentWeatherIcon.setImageResource(R.drawable.cloudy);
                         break;
+                    case "broken clouds":
+                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
+                        break;
                     case "overcast clouds":
                         currentWeatherIcon.setImageResource(R.drawable.cloudy);
                         break;
