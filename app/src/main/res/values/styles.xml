@@ -9,4 +9,24 @@
         <item name="android:textColorSecondary">#ffff</item>
     </style>
 
+    <style name="currentDateText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+
+    <style name="currentLocationText">
+        <item name="android:textSize">60sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="currentForecastText">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:layout_marginLeft">10dp</item>
+    </style>
+
 </resources>

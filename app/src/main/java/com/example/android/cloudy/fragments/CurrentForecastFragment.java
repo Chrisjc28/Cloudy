@@ -36,20 +36,22 @@ import java.util.Calendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.R.color.black;
-
 /**
  * Created by ccu17 on 26/04/2017.
  */
 
 public class CurrentForecastFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener {
 
-    @BindView(R.id.time)
-    TextView TimeText;
     @BindView(R.id.day)
     TextView CurrentDay;
-    @BindView(R.id.forecast)
-    TextView weatherForecast;
+    @BindView(R.id.description)
+    TextView weatherDescription;
+    @BindView(R.id.minTemp)
+    TextView currentMinTemp;
+    @BindView(R.id.maxTemp)
+    TextView currentMaxTemp;
+    @BindView(R.id.windSpeed)
+    TextView windSpeed;
     @BindView(R.id.location)
     TextView chosenLocation;
     @BindView(R.id.current_forecast_card_view)
@@ -82,7 +84,6 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         view = inflater.inflate(R.layout.fragment_current_forecast, container, false);
         ButterKnife.bind(this, view);
 
-        setCurrentTime();
         setCurrentDay();
 
         googleApiInit();
@@ -155,17 +156,10 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                 .build();
     }
 
-    public void setCurrentTime() {
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-        String currentDateTimeString = df.format(c.getTime());
-        TimeText.setText(currentDateTimeString);
-    }
-
 
     public void setCurrentDay() {
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("EEEE");
+        SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy");
         String currentDateTimeString = df.format(c.getTime());
         CurrentDay.setText(currentDateTimeString);
     }
@@ -174,8 +168,6 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         collectWeatherData.collectWeather(selectedPlace , new WeatherCallback() {
             @Override
             public void success(String description, double tempMin, double tempMax, double windInMph) {
-                int minTempInCelcious = (int) (tempMin);
-                int maxTempInCelcious = (int) (tempMax);
 
                 switch (description) {
                     case "clear sky":
@@ -210,11 +202,11 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                         break;
                 }
 
-                weatherForecast.setTextColor(getResources().getColor(black));
-                weatherForecast.setText("The Weather forecast for today is " + description + "."
-                        + "\nThe Minimum temp is " + minTempInCelcious + "°C"
-                        + " & Maximum temp is " + maxTempInCelcious + "°C."
-                        + "\nWind speed is " + windInMph + "mph");
+                weatherDescription.setText(String.format("The Weather forecast for today is %s", description));
+                currentMinTemp.setText(String.format("The minimum temp is %s", tempMin + "°C"));
+                currentMaxTemp.setText(String.format("The maximum temp is %s", tempMax + "°C"));
+                windSpeed.setText(String.format("The current wind speed is %s", windInMph + " KPH"));
+
 
             }
 
