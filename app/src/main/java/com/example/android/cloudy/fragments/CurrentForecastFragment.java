@@ -1,6 +1,8 @@
 package com.example.android.cloudy.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,7 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.activity.InitialScreenActivity;
@@ -31,6 +35,8 @@ import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragmen
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +47,10 @@ import butterknife.ButterKnife;
 
 public class CurrentForecastFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener {
 
+    private static final int MAX_FAVOURTIES = 3;
+
+    @BindView(R.id.parent_holder)
+    LinearLayout parent;
     @BindView(R.id.day)
     TextView CurrentDay;
     @BindView(R.id.description)
@@ -51,6 +61,8 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     TextView currentMaxTemp;
     @BindView(R.id.wind_speed)
     TextView windSpeed;
+    @BindView(R.id.wind_direction)
+    ImageView currentWindDirection;
     @BindView(R.id.location)
     TextView chosenLocation;
     @BindView(R.id.current_forecast_card_view)
@@ -59,24 +71,13 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     ImageView currentWeatherIcon;
     @BindView(R.id.favourites)
     Button addFavourites;
-    @BindView(R.id.favourites_card_view1)
-    CardView selectedFavourites1;
-    @BindView(R.id.favourites_card_view2)
-    CardView selectedFavourites2;
-    @BindView(R.id.favourites_card_view3)
-    CardView selectedFavourites3;
-    @BindView(R.id.added_favourites1)
-    TextView textViewAddFavourites1;
-    @BindView(R.id.added_favourites2)
-    TextView textViewAddFavourites2;
-    @BindView(R.id.added_favourites3)
-    TextView textViewAddFavourites3;
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
     public SupportPlaceAutocompleteFragment autocompleteFragment;
     public Menu menuOptions;
     public GoogleApiClient googleApiClient;
     private static View view;
+
 
     public String selectedPlace;
 
@@ -91,17 +92,14 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         view = inflater.inflate(R.layout.fragment_current_forecast, container, false);
         ButterKnife.bind(this, view);
-
         setCurrentDay();
-
         googleApiInit();
 
-        selectedFavourites1.setVisibility(View.INVISIBLE);
-        selectedFavourites2.setVisibility(View.INVISIBLE);
-        selectedFavourites3.setVisibility(View.INVISIBLE);
+        parent.getChildAt(2).setVisibility(View.GONE);
+        parent.getChildAt(3).setVisibility(View.GONE);
+        parent.getChildAt(4).setVisibility(View.GONE);
 
         return view;
     }
@@ -121,7 +119,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                     chosenLocation.setText(place.getName().toString());
                     collectCurrentWeatherData();
 
-                    ((InitialScreenActivity)getActivity()).placeSelected(place);
+                    ((InitialScreenActivity) getActivity()).placeSelected(place);
                 }
 
                 @Override
@@ -143,13 +141,8 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         addFavourites.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectedFavourites1.setVisibility(View.VISIBLE);
-                selectedFavourites2.setVisibility(View.VISIBLE);
-                selectedFavourites3.setVisibility(View.VISIBLE);
-                textViewAddFavourites1.setText(selectedPlace);
-                textViewAddFavourites2.setText(selectedPlace);
-                textViewAddFavourites3.setText(selectedPlace);
-
+                saveToFavourites(selectedPlace);
+                refreshFavourites();
             }
         });
 
@@ -186,9 +179,9 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     }
 
     public void collectCurrentWeatherData() {
-        collectWeatherData.collectWeather(selectedPlace , new WeatherCallback() {
+        collectWeatherData.collectWeather(selectedPlace, new WeatherCallback() {
             @Override
-            public void success(String description, double tempMin, double tempMax, double windInMph) {
+            public void success(String description, double tempMin, double tempMax, double windInMph, int windDirection) {
 
                 switch (description) {
                     case "clear sky":
@@ -229,11 +222,11 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                         break;
                 }
 
-                weatherDescription.setText(String.format("The Weather forecast for today is %s", description));
-                currentMinTemp.setText(String.format("The minimum temp is %s", tempMin + "°C"));
-                currentMaxTemp.setText(String.format("The maximum temp is %s", tempMax + "°C"));
-                windSpeed.setText(String.format("The current wind speed is %s", windInMph + " KPH"));
-
+                weatherDescription.setText((description));
+                currentMinTemp.setText(String.format(tempMin + "°C min"));
+                currentMaxTemp.setText(String.format(tempMax + "°C max"));
+                windSpeed.setText(String.format("The wind speed is %s", windInMph + " KPH"));
+                currentWindDirection.setImageResource(R.drawable.ic_arrow_upward);
 
             }
 
@@ -248,5 +241,32 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    private void saveToFavourites(String favourite) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = pref.edit();
+
+        Set<String> favList = pref.getStringSet("favourites", new HashSet<String>());
+
+        if (favList.size() < MAX_FAVOURTIES) {
+            favList.add(favourite);
+            editor.putStringSet("favourites", favList);
+            editor.commit();
+        } else {
+            Toast.makeText(getActivity(), "I pity the fool who tries to add more than 3 favourites", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private HashSet<String> getFavourite() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        return (HashSet<String>) pref.getStringSet("favourites", new HashSet<String>());
+
+    }
+
+    private void refreshFavourites() {
+        for (int i = 0; i < getFavourite().size(); i++) {
+            parent.getChildAt(i+2).setVisibility(View.VISIBLE);
+        }
     }
 }

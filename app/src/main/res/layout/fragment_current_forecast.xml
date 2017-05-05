@@ -7,6 +7,7 @@
     android:isScrollContainer="false">
 
     <LinearLayout
+        android:id="@+id/parent_holder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -28,143 +29,13 @@
 
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/current_forecast_card_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            card_view:cardCornerRadius="4dp"
-            card_view:cardElevation="4dp">
+        <include layout="@layout/weather_details_card_view" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+        <include layout="@layout/weather_details_card_view" />
 
-                <TextView
-                    android:id="@+id/day"
-                    style="@style/currentDateText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+        <include layout="@layout/weather_details_card_view" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/location"
-                        style="@style/currentLocationText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/tempLocation" />
-
-                    <ImageView
-                        android:id="@+id/current_weather_icon"
-                        android:layout_width="100dp"
-                        android:layout_height="80dp"
-                        android:layout_gravity="end" />
-
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/description"
-                        style="@style/currentForecastText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/min_temp"
-                        style="@style/currentForecastText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/max_temp"
-                        style="@style/currentForecastText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
-
-
-                    <TextView
-                        android:id="@+id/wind_speed"
-                        style="@style/currentForecastText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
-
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/favourites"
-                    style="@style/favButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-
-            </LinearLayout>
-
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/favourites_card_view1"
-            style="@style/cardView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp">
-
-            <TextView
-                android:id="@+id/added_favourites1"
-                style="@style/favouritesText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/favourites_card_view2"
-            style="@style/cardView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp">
-
-            <TextView
-                android:id="@+id/added_favourites2"
-                style="@style/favouritesText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/favourites_card_view3"
-            style="@style/cardView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp">
-
-            <TextView
-                android:id="@+id/added_favourites3"
-                style="@style/favouritesText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </android.support.v7.widget.CardView>
+        <include layout="@layout/weather_details_card_view" />
 
     </LinearLayout>
 

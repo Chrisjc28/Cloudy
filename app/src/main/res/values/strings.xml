@@ -8,6 +8,7 @@
     <string name="Favourite_cities">Add your favourite city</string>
     <string name="add_fav">Add to favourites</string>
     <string name="tempLocation">Leeds</string>
+    <string name="temp">Current Temp</string>
 
 
 </resources>

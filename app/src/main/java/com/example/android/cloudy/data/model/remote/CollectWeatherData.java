@@ -59,8 +59,9 @@ public class CollectWeatherData implements WeatherDAO {
         double tempMin = weatherResponse.main.getTempMin();
         double tempMax = weatherResponse.main.getTempMax();
         double wind =  weatherResponse.wind.getSpeed();
+        int windDirection = weatherResponse.wind.getDeg();
 
-        cb.success(weather, tempMin, tempMax, wind);
+        cb.success(weather, tempMin, tempMax, wind, windDirection);
     }
 
     @Override

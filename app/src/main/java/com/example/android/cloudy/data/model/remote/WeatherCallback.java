@@ -6,7 +6,7 @@ package com.example.android.cloudy.data.model.remote;
 
 public interface WeatherCallback {
 
-    void success(String weatherType, double tempMin, double tempMax, double windInMph);
+    void success(String weatherType, double tempMin, double tempMax, double windInMph, int windDirection);
 
     void failure(String failed);
 }
