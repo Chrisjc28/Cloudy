@@ -1,7 +1,9 @@
 package com.example.android.cloudy.activity;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.adpaters.ViewPagerAdapter;
@@ -23,6 +26,9 @@ import com.example.android.cloudy.fragments.WeeklyForecastFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -85,7 +91,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-                //share weather forecast
+                captureScreenshot();
                 break;
             case R.id.action_settings:
                 //bring up settings activity, eventually
@@ -122,4 +128,30 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
             }
         }
     }
+
+    private void captureScreenshot() {
+        try {
+            // image saving sd card path
+            String mPath = Environment.getExternalStorageDirectory().toString() + "/" + System.currentTimeMillis() + ".jpg";
+
+            // create bitmap screen capture
+            View view = getWindow().getDecorView().getRootView();
+            view.setDrawingCacheEnabled(true);
+
+            Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+            view.setDrawingCacheEnabled(false);
+
+            File imageFile = new File(mPath);
+            FileOutputStream outputStream = new FileOutputStream(imageFile);
+
+            int quality = 100;
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
 }

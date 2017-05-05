@@ -59,10 +59,18 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     ImageView currentWeatherIcon;
     @BindView(R.id.favourites)
     Button addFavourites;
-    @BindView(R.id.favourites_card_view)
-    CardView selectedFavourites;
-    @BindView(R.id.added_favourites)
-    TextView textViewAddFavourites;
+    @BindView(R.id.favourites_card_view1)
+    CardView selectedFavourites1;
+    @BindView(R.id.favourites_card_view2)
+    CardView selectedFavourites2;
+    @BindView(R.id.favourites_card_view3)
+    CardView selectedFavourites3;
+    @BindView(R.id.added_favourites1)
+    TextView textViewAddFavourites1;
+    @BindView(R.id.added_favourites2)
+    TextView textViewAddFavourites2;
+    @BindView(R.id.added_favourites3)
+    TextView textViewAddFavourites3;
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
     public SupportPlaceAutocompleteFragment autocompleteFragment;
@@ -91,18 +99,9 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
         googleApiInit();
 
-        selectedFavourites.setVisibility(View.INVISIBLE);
-
-        addFavourites.setText(R.string.add_fav);
-
-        addFavourites.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedFavourites.setVisibility(View.VISIBLE);
-                textViewAddFavourites.setText(selectedPlace);
-
-            }
-        });
+        selectedFavourites1.setVisibility(View.INVISIBLE);
+        selectedFavourites2.setVisibility(View.INVISIBLE);
+        selectedFavourites3.setVisibility(View.INVISIBLE);
 
         return view;
     }
@@ -138,6 +137,21 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
             ft.commit();
             fm.executePendingTransactions();
         }
+
+        addFavourites.setText(R.string.add_fav);
+
+        addFavourites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedFavourites1.setVisibility(View.VISIBLE);
+                selectedFavourites2.setVisibility(View.VISIBLE);
+                selectedFavourites3.setVisibility(View.VISIBLE);
+                textViewAddFavourites1.setText(selectedPlace);
+                textViewAddFavourites2.setText(selectedPlace);
+                textViewAddFavourites3.setText(selectedPlace);
+
+            }
+        });
 
     }
 
