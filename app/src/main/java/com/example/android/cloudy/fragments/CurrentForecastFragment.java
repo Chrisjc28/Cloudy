@@ -25,6 +25,7 @@ import com.example.android.cloudy.R;
 import com.example.android.cloudy.activity.InitialScreenActivity;
 import com.example.android.cloudy.data.model.remote.CollectWeatherData;
 import com.example.android.cloudy.data.model.remote.WeatherCallback;
+import com.example.android.cloudy.data.model.remote.pojos.WeatherResponse;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -47,7 +48,7 @@ import butterknife.ButterKnife;
 
 public class CurrentForecastFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener {
 
-    private static final int MAX_FAVOURTIES = 3;
+    private static final int MAX_FAVOURITES = 3;
 
     @BindView(R.id.parent_holder)
     LinearLayout parent;
@@ -77,6 +78,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     public Menu menuOptions;
     public GoogleApiClient googleApiClient;
     private static View view;
+    public String description;
 
 
     public String selectedPlace;
@@ -118,7 +120,6 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                     selectedPlace = place.getName().toString();
                     chosenLocation.setText(place.getName().toString());
                     collectCurrentWeatherData();
-
                     ((InitialScreenActivity) getActivity()).placeSelected(place);
                 }
 
@@ -181,52 +182,24 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     public void collectCurrentWeatherData() {
         collectWeatherData.collectWeather(selectedPlace, new WeatherCallback() {
             @Override
-            public void success(String description, double tempMin, double tempMax, double windInMph, int windDirection) {
+            public void success(WeatherResponse weatherResponse) {
 
-                switch (description) {
-                    case "clear sky":
-                        currentWeatherIcon.setImageResource(R.drawable.sunny);
-                        break;
-                    case "mist":
-                        currentWeatherIcon.setImageResource(R.drawable.mist);
-                        break;
-                    case "few clouds":
-                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
-                        break;
-                    case "scattered clouds":
-                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
-                        break;
-                    case "broken clouds":
-                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
-                        break;
-                    case "overcast clouds":
-                        currentWeatherIcon.setImageResource(R.drawable.cloudy);
-                        break;
-                    case "heavy intensity rain":
-                        currentWeatherIcon.setImageResource(R.drawable.rain);
-                        break;
-                    case "light intensity shower rain":
-                        currentWeatherIcon.setImageResource(R.drawable.rain);
-                        break;
-                    case "shower rain":
-                        currentWeatherIcon.setImageResource(R.drawable.rain);
-                        break;
-                    case "light rain":
-                        currentWeatherIcon.setImageResource(R.drawable.rain);
-                        break;
-                    case "haze":
-                        currentWeatherIcon.setImageResource(R.drawable.mist);
-                        break;
-                    default:
-                        currentWeatherIcon.setImageResource(R.drawable.sunny);
-                        break;
-                }
+                // top item only
+                String weather = weatherResponse.weather[0].getDescription();
+                double tempMin = weatherResponse.main.getTempMin();
+                double tempMax = weatherResponse.main.getTempMax();
+                double wind =  weatherResponse.wind.getSpeed();
+                int windDirection = weatherResponse.wind.getDeg();
+                currentWeatherIcon.setImageResource(getWeatherIconFromDescription(weather));
 
-                weatherDescription.setText((description));
+                weatherDescription.setText((weather));
                 currentMinTemp.setText(String.format(tempMin + "°C min"));
                 currentMaxTemp.setText(String.format(tempMax + "°C max"));
-                windSpeed.setText(String.format("The wind speed is %s", windInMph + " KPH"));
+                windSpeed.setText(String.format("The wind speed is %s", wind + " KPH"));
                 currentWindDirection.setImageResource(R.drawable.ic_arrow_upward);
+
+                // favourite refresh
+                refreshFavourites();
 
             }
 
@@ -237,6 +210,22 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         });
     }
 
+    private int getWeatherIconFromDescription(String description) {
+        switch (description) {
+            case "clear sky": return R.drawable.sunny;
+            case "mist": return R.drawable.mist;
+            case "few clouds": return R.drawable.cloudy;
+            case "scattered clouds": return R.drawable.cloudy;
+            case "broken clouds": return R.drawable.cloudy;
+            case "overcast clouds": return R.drawable.cloudy;
+            case "heavy intensity rain": return R.drawable.rain;
+            case "light intensity shower rain": return R.drawable.rain;
+            case "shower rain": return R.drawable.rain;
+            case "light rain": return R.drawable.rain;
+            case "haze": return R.drawable.mist;
+            default: return R.drawable.sunny;
+        }
+    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -249,7 +238,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
         Set<String> favList = pref.getStringSet("favourites", new HashSet<String>());
 
-        if (favList.size() < MAX_FAVOURTIES) {
+        if (favList.size() < MAX_FAVOURITES) {
             favList.add(favourite);
             editor.putStringSet("favourites", favList);
             editor.commit();
@@ -266,7 +255,35 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
     private void refreshFavourites() {
         for (int i = 0; i < getFavourite().size(); i++) {
-            parent.getChildAt(i+2).setVisibility(View.VISIBLE);
+            View childView = parent.getChildAt(i+2);
+            childView.setVisibility(View.VISIBLE);
+
+            TextView dateTextView = (TextView) childView.findViewById(R.id.day);
+            dateTextView.setVisibility(View.GONE);
+
+            TextView locationTextView = (TextView) childView.findViewById(R.id.location);
+            locationTextView.setText(selectedPlace);
+
+            ImageView weatherIconImageView = (ImageView) childView.findViewById(R.id.current_weather_icon);
+            weatherIconImageView.setImageResource(R.drawable.sunny);
+
+            TextView descriptionTextView = (TextView) childView.findViewById(R.id.description);
+            descriptionTextView.setText(weatherDescription.getText());
+
+            TextView minTempTextView = (TextView) childView.findViewById(R.id.min_temp);
+            minTempTextView.setText(currentMinTemp.getText());
+
+            TextView maxTempTextView = (TextView) childView.findViewById(R.id.max_temp);
+            maxTempTextView.setText(currentMaxTemp.getText());
+
+            TextView windSpeedTextView = (TextView) childView.findViewById(R.id.wind_speed);
+            windSpeedTextView.setText(windSpeed.getText());
+
+            ImageView windImageView = (ImageView) childView.findViewById(R.id.wind_direction);
+            windImageView.setImageResource(R.drawable.ic_arrow_upward);
+
+            Button addFavButton = (Button) childView.findViewById(R.id.favourites);
+            addFavButton.setVisibility(View.GONE);
         }
     }
 }
