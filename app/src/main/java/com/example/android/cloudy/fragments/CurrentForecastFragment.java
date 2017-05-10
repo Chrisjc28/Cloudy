@@ -151,15 +151,22 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
     @Override
     public void onStart() {
-        googleApiClient.connect();
         super.onStart();
+        googleApiClient.connect();
     }
 
 
     @Override
     public void onStop() {
-        googleApiClient.disconnect();
         super.onStop();
+        googleApiClient.disconnect();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshFavourites();
     }
 
     public void googleApiInit() {
@@ -189,10 +196,11 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                 double tempMin = weatherResponse.main.getTempMin();
                 double tempMax = weatherResponse.main.getTempMax();
                 double wind =  weatherResponse.wind.getSpeed();
-                int windDirection = weatherResponse.wind.getDeg();
-                currentWeatherIcon.setImageResource(getWeatherIconFromDescription(weather));
+                double windDirection = weatherResponse.wind.hasDeg() ? weatherResponse.wind.getDeg() : 0;
+
 
                 weatherDescription.setText((weather));
+                currentWeatherIcon.setImageResource(getWeatherIconFromDescription(weather));
                 currentMinTemp.setText(String.format(tempMin + "°C min"));
                 currentMaxTemp.setText(String.format(tempMax + "°C max"));
                 windSpeed.setText(String.format("The wind speed is %s", wind + " KPH"));
@@ -239,9 +247,14 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         Set<String> favList = pref.getStringSet("favourites", new HashSet<String>());
 
         if (favList.size() < MAX_FAVOURITES) {
-            favList.add(favourite);
-            editor.putStringSet("favourites", favList);
+            HashSet<String> tmpHashset = new HashSet<>();
+            for (String s : favList) {
+                tmpHashset.add(s);
+            }
+            tmpHashset.add(favourite);
+            editor.putStringSet("favourites", tmpHashset);
             editor.commit();
+            Log.i("SHANE", "Saved: " + favList.size());
         } else {
             Toast.makeText(getActivity(), "I pity the fool who tries to add more than 3 favourites", Toast.LENGTH_LONG).show();
         }
@@ -249,41 +262,58 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
     private HashSet<String> getFavourite() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        return (HashSet<String>) pref.getStringSet("favourites", new HashSet<String>());
+        HashSet<String> tmp = (HashSet<String>) pref.getStringSet("favourites", new HashSet<String>());
+        Log.i("SHANE", "Retreived: " + tmp.size());
+        return tmp;
 
     }
 
+
     private void refreshFavourites() {
-        for (int i = 0; i < getFavourite().size(); i++) {
+        int i = 0;
+        for (final String favoriteCity : getFavourite()) {
             View childView = parent.getChildAt(i+2);
             childView.setVisibility(View.VISIBLE);
 
-            TextView dateTextView = (TextView) childView.findViewById(R.id.day);
-            dateTextView.setVisibility(View.GONE);
+            final TextView dateTextView = (TextView) childView.findViewById(R.id.day);
+            final TextView locationTextView = (TextView) childView.findViewById(R.id.location);
+            final ImageView weatherIconImageView = (ImageView) childView.findViewById(R.id.current_weather_icon);
+            final TextView descriptionTextView = (TextView) childView.findViewById(R.id.description);
+            final TextView minTempTextView = (TextView) childView.findViewById(R.id.min_temp);
+            final TextView maxTempTextView = (TextView) childView.findViewById(R.id.max_temp);
+            final TextView windSpeedTextView = (TextView) childView.findViewById(R.id.wind_speed);
+            final ImageView windImageView = (ImageView) childView.findViewById(R.id.wind_direction);
+            final Button addFavButton = (Button) childView.findViewById(R.id.favourites);
 
-            TextView locationTextView = (TextView) childView.findViewById(R.id.location);
-            locationTextView.setText(selectedPlace);
+            collectWeatherData.collectWeather(favoriteCity, new WeatherCallback() {
+                @Override
+                public void success(WeatherResponse weatherResponse) {
 
-            ImageView weatherIconImageView = (ImageView) childView.findViewById(R.id.current_weather_icon);
-            weatherIconImageView.setImageResource(R.drawable.sunny);
+                    String weather = weatherResponse.weather[0].getDescription();
+                    double tempMin = weatherResponse.main.getTempMin();
+                    double tempMax = weatherResponse.main.getTempMax();
+                    double wind =  weatherResponse.wind.getSpeed();
+                    double windDirection = weatherResponse.wind.hasDeg() ? weatherResponse.wind.getDeg() : 0;
 
-            TextView descriptionTextView = (TextView) childView.findViewById(R.id.description);
-            descriptionTextView.setText(weatherDescription.getText());
+                    dateTextView.setVisibility(View.GONE);
+                    locationTextView.setText(favoriteCity);
+                    weatherIconImageView.setImageResource(getWeatherIconFromDescription(weather));
+                    descriptionTextView.setText(weather);
+                    minTempTextView.setText(String.format(tempMin + "°C min"));
+                    maxTempTextView.setText(String.format(tempMax + "°C max"));
+                    windSpeedTextView.setText(String.format("The wind speed is %s", wind + " KPH"));
+                    windImageView.setImageResource(R.drawable.ic_arrow_upward);
+                    addFavButton.setVisibility(View.GONE);
 
-            TextView minTempTextView = (TextView) childView.findViewById(R.id.min_temp);
-            minTempTextView.setText(currentMinTemp.getText());
+                }
 
-            TextView maxTempTextView = (TextView) childView.findViewById(R.id.max_temp);
-            maxTempTextView.setText(currentMaxTemp.getText());
+                @Override
+                public void failure(String failed) {
+                    Log.i("CHRIS", "Sorry there was an error displaying the weather");
+                }
+            });
 
-            TextView windSpeedTextView = (TextView) childView.findViewById(R.id.wind_speed);
-            windSpeedTextView.setText(windSpeed.getText());
-
-            ImageView windImageView = (ImageView) childView.findViewById(R.id.wind_direction);
-            windImageView.setImageResource(R.drawable.ic_arrow_upward);
-
-            Button addFavButton = (Button) childView.findViewById(R.id.favourites);
-            addFavButton.setVisibility(View.GONE);
+            i++;
         }
     }
 }
