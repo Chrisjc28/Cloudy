@@ -6,37 +6,61 @@
     android:fillViewport="true"
     android:isScrollContainer="false">
 
-    <LinearLayout
-        android:id="@+id/parent_holder"
+    <ViewFlipper
+        android:id="@+id/flipper"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_view"
+        <LinearLayout
+            android:id="@+id/parent_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            card_view:cardCornerRadius="4dp">
+            android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/place_autocomplete_fragment"
+            <android.support.v7.widget.CardView
+                android:id="@+id/card_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                card_view:cardCornerRadius="4dp">
+
+                <FrameLayout
+                    android:id="@+id/place_autocomplete_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </android.support.v7.widget.CardView>
+
+            <include layout="@layout/weather_details_card_view" />
+
+            <include layout="@layout/weather_details_card_view" />
+
+            <include layout="@layout/weather_details_card_view" />
+
+            <include layout="@layout/weather_details_card_view" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <TextView
+                android:id="@+id/place_holder"
+                android:text="haz got cheezze burgers!!"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-        </android.support.v7.widget.CardView>
+        </LinearLayout>
 
-        <include layout="@layout/weather_details_card_view" />
 
-        <include layout="@layout/weather_details_card_view" />
+    </ViewFlipper>
 
-        <include layout="@layout/weather_details_card_view" />
 
-        <include layout="@layout/weather_details_card_view" />
-
-    </LinearLayout>
 
 </ScrollView>

@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.activity.InitialScreenActivity;
@@ -72,6 +73,8 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     ImageView currentWeatherIcon;
     @BindView(R.id.favourites)
     Button addFavourites;
+    @BindView(R.id.flipper)
+    ViewFlipper flipViewBitches;
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
     public SupportPlaceAutocompleteFragment autocompleteFragment;
@@ -102,6 +105,8 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         parent.getChildAt(2).setVisibility(View.GONE);
         parent.getChildAt(3).setVisibility(View.GONE);
         parent.getChildAt(4).setVisibility(View.GONE);
+
+        flipViewBitches.setDisplayedChild(0);
 
         return view;
     }
