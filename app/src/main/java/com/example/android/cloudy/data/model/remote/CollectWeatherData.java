@@ -54,7 +54,6 @@ public class CollectWeatherData implements WeatherDAO {
 
     public void jsonParsing(JSONObject response ,final WeatherCallback cb) {
         WeatherResponse weatherResponse = new Gson().fromJson(response.toString(), WeatherResponse.class);
-
         cb.success(weatherResponse);
     }
 
