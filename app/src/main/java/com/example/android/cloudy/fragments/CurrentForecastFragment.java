@@ -74,7 +74,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     @BindView(R.id.favourites)
     Button addFavourites;
     @BindView(R.id.flipper)
-    ViewFlipper flipViewBitches;
+    ViewFlipper viewFlipper;
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
     public SupportPlaceAutocompleteFragment autocompleteFragment;
@@ -106,7 +106,14 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         parent.getChildAt(3).setVisibility(View.GONE);
         parent.getChildAt(4).setVisibility(View.GONE);
 
-        flipViewBitches.setDisplayedChild(0);
+        viewFlipper.setDisplayedChild(0);
+
+        View childView = parent.getChildAt(2);
+
+        if (childView.equals(null)) {
+            viewFlipper.setDisplayedChild(0);
+        }
+
 
         return view;
     }
