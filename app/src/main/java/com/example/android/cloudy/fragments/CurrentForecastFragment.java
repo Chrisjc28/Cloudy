@@ -103,9 +103,9 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         setCurrentDay();
         googleApiInit();
 
+        parent.getChildAt(1).setVisibility(View.GONE);
         parent.getChildAt(2).setVisibility(View.GONE);
         parent.getChildAt(3).setVisibility(View.GONE);
-        parent.getChildAt(4).setVisibility(View.GONE);
 
         return view;
     }
@@ -123,11 +123,11 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
                 @Override
                 public void onPlaceSelected(Place place) {
-                    parent.getChildAt(1).setVisibility(View.VISIBLE);
-                    selectedPlace = place.getName().toString();
+                    selectedPlace = place.getAddress().toString();
                     chosenLocation.setText(place.getName().toString());
                     collectCurrentWeatherData();
                     ((InitialScreenActivity) getActivity()).placeSelected(place);
+                    isInitialState();
                 }
 
                 @Override
@@ -277,7 +277,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     private void refreshFavourites() {
         int i = 0;
         for (final String favoriteCity : getFavourite()) {
-            View childView = parent.getChildAt(i+2);
+            View childView = parent.getChildAt(i+1);
             childView.setVisibility(View.VISIBLE);
 
             final TextView dateTextView = (TextView) childView.findViewById(R.id.day);
