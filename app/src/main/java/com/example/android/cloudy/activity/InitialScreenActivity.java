@@ -23,7 +23,7 @@ import com.example.android.cloudy.adpaters.ViewPagerAdapter;
 import com.example.android.cloudy.fragments.CurrentForecastFragment;
 import com.example.android.cloudy.fragments.GoogleMapsFragment;
 import com.example.android.cloudy.fragments.PlaceSelected;
-import com.example.android.cloudy.fragments.WeeklyForecastFragment;
+import com.example.android.cloudy.fragments.DailyForecastFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
@@ -35,8 +35,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class InitialScreenActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-
-    public CurrentForecastFragment currentForecastFragment = new CurrentForecastFragment();
 
     @BindView(R.id.my_toolbar)
     Toolbar MyToolbar;
@@ -68,10 +66,9 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
 
     public void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        //todo: add strings
-        adapter.addFragment(new CurrentForecastFragment(), "Current");
-        adapter.addFragment(new WeeklyForecastFragment(), "Daily");
-        adapter.addFragment(new GoogleMapsFragment(), "Maps");
+        adapter.addFragment(new CurrentForecastFragment(), getString(R.string.Current_weather_fragment));
+        adapter.addFragment(new DailyForecastFragment(), getString(R.string.Daily_weather_fragment));
+        adapter.addFragment(new GoogleMapsFragment(), getString(R.string.maps_fragment));
         viewPager.setOffscreenPageLimit(TAB_COUNT + 1);
         viewPager.setAdapter(adapter);
     }

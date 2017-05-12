@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
  * Created by ccu17 on 26/04/2017.
  */
 
-public class WeeklyForecastFragment extends Fragment implements PlaceSelected {
+public class DailyForecastFragment extends Fragment implements PlaceSelected {
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
 
@@ -35,7 +35,7 @@ public class WeeklyForecastFragment extends Fragment implements PlaceSelected {
     private RecyclerView.LayoutManager layoutManager;
     public ArrayList<ForecastHolder> fiveDayForecast = new ArrayList<>();
 
-    public WeeklyForecastFragment() {
+    public DailyForecastFragment() {
         // Required empty public constructor
     }
 

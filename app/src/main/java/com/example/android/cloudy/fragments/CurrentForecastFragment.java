@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -80,11 +79,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
     public SupportPlaceAutocompleteFragment autocompleteFragment;
-    public Menu menuOptions;
     public GoogleApiClient googleApiClient;
-    public String description;
-
-
     public String selectedPlace = null;
 
     public CurrentForecastFragment() {
@@ -120,7 +115,6 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
             autocompleteFragment = new SupportPlaceAutocompleteFragment();
 
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-
                 @Override
                 public void onPlaceSelected(Place place) {
                     selectedPlace = place.getAddress().toString();
@@ -204,7 +198,6 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                 double wind =  weatherResponse.wind.getSpeed();
                 double windDirection = weatherResponse.wind.hasDeg() ? weatherResponse.wind.getDeg() : 0;
 
-
                 weatherDescription.setText((weather));
                 currentWeatherIcon.setImageResource(getWeatherIconFromDescription(weather));
                 currentMinTemp.setText(String.format(tempMin + "°C min"));
@@ -212,6 +205,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                 windSpeed.setText(String.format("The wind speed is %s", wind + " KPH"));
                 currentWindDirection.setImageResource(R.drawable.ic_arrow_upward);
 
+                parent.getChildAt(0).setVisibility(View.VISIBLE);
                 // favourite refresh
                 refreshFavourites();
 
@@ -250,12 +244,8 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     //todo: move things to constants (e.g., favourites string)
     private void saveToFavourites(String favourite) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = pref.edit();
-
         Set<String> favList = pref.getStringSet("favourites", new HashSet<String>());
-
         Set<String> set = new HashSet<String>();
-
         if (favList.size() < MAX_FAVOURITES) {
             set.addAll(getFavourite());
             set.add(favourite);
@@ -269,7 +259,6 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     private HashSet<String> getFavourite() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         HashSet<String> tmp = (HashSet<String>) pref.getStringSet("favourites", new HashSet<String>());
-        Log.i("SHANE", "Retreived: " + tmp.size());
         return tmp;
 
     }
@@ -329,6 +318,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
         } else {
             viewFlipper.setDisplayedChild(0);
+            parent.getChildAt(0).setVisibility(View.GONE);
         }
     }
 }

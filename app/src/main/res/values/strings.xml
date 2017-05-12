@@ -10,6 +10,9 @@
     <string name="tempLocation">Leeds</string>
     <string name="temp">Current Temp</string>
     <string name="no_weather_data_at_this_moment_in_time">No weather data at this moment in time, \nPlease search a for a desired cities forecast.</string>
+    <string name="Current_weather_fragment">Current</string>
+    <string name="Daily_weather_fragment">Daily</string>
+    <string name="maps_fragment">Maps</string>
 
 
 </resources>
