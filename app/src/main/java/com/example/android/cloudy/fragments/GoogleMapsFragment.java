@@ -14,6 +14,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +59,10 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback{
         gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new
                 LatLng(0,0), 0));
+        LatLng leeds = new LatLng(53.801277, -1.548567);
+        googleMap.addMarker(new MarkerOptions().position(leeds)
+                .title("Marker in Sydney"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(leeds));
     }
 
     @Override
