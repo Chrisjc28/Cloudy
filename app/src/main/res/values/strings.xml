@@ -9,6 +9,7 @@
     <string name="add_fav">Add to favourites</string>
     <string name="tempLocation">Leeds</string>
     <string name="temp">Current Temp</string>
+    <string name="no_weather_data_at_this_moment_in_time">No weather data at this moment in time, \nPlease search a for a desired cities forecast.</string>
 
 
 </resources>

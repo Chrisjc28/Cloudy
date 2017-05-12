@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -61,15 +62,13 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        MyToolbar.setTitleTextColor(getColor(R.color.menuItems));
+        MyToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.menuItems));
         setSupportActionBar(MyToolbar);
-
-        currentForecastFragment.newInstance();
-
     }
 
     public void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        //todo: add strings
         adapter.addFragment(new CurrentForecastFragment(), "Current");
         adapter.addFragment(new WeeklyForecastFragment(), "Daily");
         adapter.addFragment(new GoogleMapsFragment(), "Maps");
@@ -122,7 +121,7 @@ public class InitialScreenActivity extends AppCompatActivity implements GoogleAp
 
     public void placeSelected(Place place) {
         this.selectedPlace = place.getAddress().toString();
-        for (Fragment f : getSupportFragmentManager().getFragments()){
+        for (Fragment f : getSupportFragmentManager().getFragments()) {
             if (f instanceof PlaceSelected) {
                 ((PlaceSelected) f).placeSelected(place);
             }

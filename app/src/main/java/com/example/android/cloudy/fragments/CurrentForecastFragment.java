@@ -75,16 +75,17 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     Button addFavourites;
     @BindView(R.id.flipper)
     ViewFlipper viewFlipper;
+    @BindView(R.id.no_weather_image)
+    ImageView noWeatherDataImage;
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
     public SupportPlaceAutocompleteFragment autocompleteFragment;
     public Menu menuOptions;
     public GoogleApiClient googleApiClient;
-    private static View view;
     public String description;
 
 
-    public String selectedPlace;
+    public String selectedPlace = null;
 
     public CurrentForecastFragment() {
         // Required empty public constructor
@@ -97,7 +98,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_current_forecast, container, false);
+        View view = inflater.inflate(R.layout.fragment_current_forecast, container, false);
         ButterKnife.bind(this, view);
         setCurrentDay();
         googleApiInit();
@@ -106,21 +107,14 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         parent.getChildAt(3).setVisibility(View.GONE);
         parent.getChildAt(4).setVisibility(View.GONE);
 
-        viewFlipper.setDisplayedChild(0);
-
-        View childView = parent.getChildAt(2);
-
-        if (childView.equals(null)) {
-            viewFlipper.setDisplayedChild(0);
-        }
-
-
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        isInitialState();
 
         if (autocompleteFragment == null) {
             autocompleteFragment = new SupportPlaceAutocompleteFragment();
@@ -129,6 +123,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
                 @Override
                 public void onPlaceSelected(Place place) {
+                    parent.getChildAt(1).setVisibility(View.VISIBLE);
                     selectedPlace = place.getName().toString();
                     chosenLocation.setText(place.getName().toString());
                     collectCurrentWeatherData();
@@ -158,7 +153,6 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                 refreshFavourites();
             }
         });
-
     }
 
     @Override
@@ -230,6 +224,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         });
     }
 
+    //todo: convert to enum
     private int getWeatherIconFromDescription(String description) {
         switch (description) {
             case "clear sky": return R.drawable.sunny;
@@ -252,26 +247,25 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
     }
 
+    //todo: move things to constants (e.g., favourites string)
     private void saveToFavourites(String favourite) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = pref.edit();
 
         Set<String> favList = pref.getStringSet("favourites", new HashSet<String>());
 
+        Set<String> set = new HashSet<String>();
+
         if (favList.size() < MAX_FAVOURITES) {
-            HashSet<String> tmpHashset = new HashSet<>();
-            for (String s : favList) {
-                tmpHashset.add(s);
-            }
-            tmpHashset.add(favourite);
-            editor.putStringSet("favourites", tmpHashset);
-            editor.commit();
-            Log.i("SHANE", "Saved: " + favList.size());
+            set.addAll(getFavourite());
+            set.add(favourite);
+            pref.edit().putStringSet("favourites", set).apply();
         } else {
             Toast.makeText(getActivity(), "I pity the fool who tries to add more than 3 favourites", Toast.LENGTH_LONG).show();
         }
     }
 
+    //todo: rename
     private HashSet<String> getFavourite() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         HashSet<String> tmp = (HashSet<String>) pref.getStringSet("favourites", new HashSet<String>());
@@ -279,7 +273,6 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         return tmp;
 
     }
-
 
     private void refreshFavourites() {
         int i = 0;
@@ -326,6 +319,16 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
             });
 
             i++;
+        }
+    }
+
+    public void isInitialState() {
+        if (getFavourite().size() <= 0 && (selectedPlace == null || selectedPlace.trim().equals("") )) {
+            viewFlipper.setDisplayedChild(1);
+            noWeatherDataImage.setColorFilter(getResources().getColor(R.color.menuItems));
+
+        } else {
+            viewFlipper.setDisplayedChild(0);
         }
     }
 }
