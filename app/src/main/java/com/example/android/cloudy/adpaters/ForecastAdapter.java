@@ -56,12 +56,13 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
     @Override
     public void onBindViewHolder(ForecastAdapter.ViewHolder holder, int position) {
         holder.textViewDate.setText(dataSet.get(position).getDate());
-        holder.textViewWind.setText(String.format("Wind speeds equal to %s", dataSet.get(position).getWind().toString()+ " KPH"));
-        holder.textViewMinTemp.setText(String.format("Min temp %s", dataSet.get(position).getTempMin() + "°C"));
-        holder.textViewMaxTemp.setText(String.format("Max temp %s", dataSet.get(position).getTempMax() + "°C"));
-        holder.textViewDescription.setText(String.format("The Forecast is %s", dataSet.get(position).getDescription()));
+        holder.textViewWind.setText(String.format("The wind speed is %s", dataSet.get(position).getWind().toString()+ " KPH"));
+        holder.textViewMinTemp.setText(String.format(dataSet.get(position).getTempMin() + "°C min"));
+        holder.textViewMaxTemp.setText(String.format(dataSet.get(position).getTempMax() + "°C max"));
+        holder.textViewDescription.setText(dataSet.get(position).getDescription());
 
-        switch (String.valueOf(holder.textViewDescription)) {
+
+        switch (dataSet.get(position).getDescription()) {
             case "cloudy":
                 holder.weeklyForecastIcon.setImageResource(R.drawable.cloudy);
                 break;
