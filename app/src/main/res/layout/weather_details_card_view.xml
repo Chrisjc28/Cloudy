@@ -68,7 +68,15 @@
                 style="@style/highLightedText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/temp" />
+                android:text="@string/temp"
+                />
+
+            <TextView
+                android:id="@+id/current_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/highLightedText"
+                />
 
 
             <LinearLayout

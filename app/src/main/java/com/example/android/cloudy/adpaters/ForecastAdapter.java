@@ -57,8 +57,8 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
     public void onBindViewHolder(ForecastAdapter.ViewHolder holder, int position) {
         holder.textViewDate.setText(dataSet.get(position).getDate());
         holder.textViewWind.setText(String.format("The wind speed is %s", dataSet.get(position).getWind().toString()+ " KPH"));
-        holder.textViewMinTemp.setText(String.format(dataSet.get(position).getTempMin() + "°C min"));
-        holder.textViewMaxTemp.setText(String.format(dataSet.get(position).getTempMax() + "°C max"));
+        holder.textViewMinTemp.setText(String.format("Min " + dataSet.get(position).getTempMin() + "°C"));
+        holder.textViewMaxTemp.setText(String.format("Max "+ dataSet.get(position).getTempMax() + "°C"));
         holder.textViewDescription.setText(dataSet.get(position).getDescription());
 
 

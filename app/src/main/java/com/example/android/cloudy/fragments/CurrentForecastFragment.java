@@ -56,6 +56,8 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     TextView CurrentDay;
     @BindView(R.id.description)
     TextView weatherDescription;
+    @BindView(R.id.current_temp)
+    TextView currentTemp;
     @BindView(R.id.min_temp)
     TextView currentMinTemp;
     @BindView(R.id.max_temp)
@@ -147,6 +149,14 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                 refreshFavourites();
             }
         });
+
+        parent.getChildAt(1).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                parent.getChildAt(1).setVisibility(View.GONE);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -193,6 +203,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
                 // top item only
                 String weather = weatherResponse.weather[0].getDescription();
+                double temp = weatherResponse.main.getTemp();
                 double tempMin = weatherResponse.main.getTempMin();
                 double tempMax = weatherResponse.main.getTempMax();
                 double wind =  weatherResponse.wind.getSpeed();
@@ -200,8 +211,9 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
 
                 weatherDescription.setText((weather));
                 currentWeatherIcon.setImageResource(getWeatherIconFromDescription(weather));
-                currentMinTemp.setText(String.format(tempMin + "°C min"));
-                currentMaxTemp.setText(String.format(tempMax + "°C max"));
+                currentTemp.setText(String.format(temp + "°C"));
+                currentMinTemp.setText(String.format("Min " + tempMin + "°C"));
+                currentMaxTemp.setText(String.format("Max" + tempMax + "°C"));
                 windSpeed.setText(String.format("The wind speed is %s", wind + " KPH"));
                 currentWindDirection.setImageResource(R.drawable.ic_arrow_upward);
 
@@ -273,6 +285,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
             final TextView locationTextView = (TextView) childView.findViewById(R.id.location);
             final ImageView weatherIconImageView = (ImageView) childView.findViewById(R.id.current_weather_icon);
             final TextView descriptionTextView = (TextView) childView.findViewById(R.id.description);
+            final TextView tempTextView = (TextView) childView.findViewById(R.id.current_temp);
             final TextView minTempTextView = (TextView) childView.findViewById(R.id.min_temp);
             final TextView maxTempTextView = (TextView) childView.findViewById(R.id.max_temp);
             final TextView windSpeedTextView = (TextView) childView.findViewById(R.id.wind_speed);
@@ -284,6 +297,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                 public void success(WeatherResponse weatherResponse) {
 
                     String weather = weatherResponse.weather[0].getDescription();
+                    double temp = weatherResponse.main.getTemp();
                     double tempMin = weatherResponse.main.getTempMin();
                     double tempMax = weatherResponse.main.getTempMax();
                     double wind =  weatherResponse.wind.getSpeed();
@@ -293,8 +307,9 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                     locationTextView.setText(favoriteCity);
                     weatherIconImageView.setImageResource(getWeatherIconFromDescription(weather));
                     descriptionTextView.setText(weather);
-                    minTempTextView.setText(String.format(tempMin + "°C min"));
-                    maxTempTextView.setText(String.format(tempMax + "°C max"));
+                    tempTextView.setText(String.format(temp + "°C"));
+                    minTempTextView.setText(String.format("Min " + tempMin + "°C"));
+                    maxTempTextView.setText(String.format("Max" + tempMax + "°C"));
                     windSpeedTextView.setText(String.format("The wind speed is %s", wind + " KPH"));
                     windImageView.setImageResource(R.drawable.ic_arrow_upward);
                     addFavButton.setVisibility(View.GONE);
@@ -314,8 +329,6 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     public void isInitialState() {
         if (getFavourite().size() <= 0 && (selectedPlace == null || selectedPlace.trim().equals("") )) {
             viewFlipper.setDisplayedChild(1);
-            noWeatherDataImage.setColorFilter(getResources().getColor(R.color.menuItems));
-
         } else {
             viewFlipper.setDisplayedChild(0);
             parent.getChildAt(0).setVisibility(View.GONE);

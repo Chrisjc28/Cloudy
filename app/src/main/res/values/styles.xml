@@ -75,7 +75,7 @@
     </style>
 
     <style name="initialDataText">
-        <item name="android:textColor">#ffffff</item>
+        <item name="android:textColor">#000</item>
         <item name="android:textSize">22sp</item>
         <item name="android:layout_margin">16dp</item>
     </style>
