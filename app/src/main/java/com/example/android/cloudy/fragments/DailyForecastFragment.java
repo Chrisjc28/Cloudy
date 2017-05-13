@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import com.example.android.cloudy.R;
 import com.example.android.cloudy.adpaters.ForecastAdapter;
 import com.example.android.cloudy.data.model.remote.CollectWeatherData;
-import com.example.android.cloudy.data.model.remote.pojos.DailyForecast;
 import com.example.android.cloudy.data.model.remote.ForecastCallback;
 import com.example.android.cloudy.data.model.remote.ForecastHolder;
+import com.example.android.cloudy.data.model.remote.pojos.DailyForecast;
 import com.google.android.gms.location.places.Place;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
  * Created by ccu17 on 26/04/2017.
  */
 
-public class WeeklyForecastFragment extends Fragment implements PlaceSelected {
+public class DailyForecastFragment extends Fragment implements PlaceSelected {
 
     private CollectWeatherData collectWeatherData = new CollectWeatherData();
 
@@ -35,7 +35,7 @@ public class WeeklyForecastFragment extends Fragment implements PlaceSelected {
     private RecyclerView.LayoutManager layoutManager;
     public ArrayList<ForecastHolder> fiveDayForecast = new ArrayList<>();
 
-    public WeeklyForecastFragment() {
+    public DailyForecastFragment() {
         // Required empty public constructor
     }
 

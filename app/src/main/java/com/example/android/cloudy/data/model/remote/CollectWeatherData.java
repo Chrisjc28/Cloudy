@@ -54,13 +54,7 @@ public class CollectWeatherData implements WeatherDAO {
 
     public void jsonParsing(JSONObject response ,final WeatherCallback cb) {
         WeatherResponse weatherResponse = new Gson().fromJson(response.toString(), WeatherResponse.class);
-
-        String weather = weatherResponse.weather[0].getDescription();
-        double tempMin = weatherResponse.main.getTempMin();
-        double tempMax = weatherResponse.main.getTempMax();
-        double wind =  weatherResponse.wind.getSpeed();
-
-        cb.success(weather, tempMin, tempMax, wind);
+        cb.success(weatherResponse);
     }
 
     @Override
