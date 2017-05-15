@@ -49,6 +49,7 @@ import butterknife.ButterKnife;
 public class CurrentForecastFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener {
 
     private static final int MAX_FAVOURITES = 3;
+    private static final String FAVOURITES = "";
 
     @BindView(R.id.parent_holder)
     LinearLayout parent;
@@ -87,11 +88,11 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     public CurrentForecastFragment() {
         // Required empty public constructor
     }
-
-    public static CurrentForecastFragment newInstance() {
-        CurrentForecastFragment fragment = new CurrentForecastFragment();
-        return fragment;
-    }
+//
+//    public static CurrentForecastFragment newInstance() {
+//        CurrentForecastFragment fragment = new CurrentForecastFragment();
+//        return fragment;
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -108,7 +109,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         isInitialState();
@@ -153,7 +154,11 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
         parent.getChildAt(1).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                parent.getChildAt(1).setVisibility(View.GONE);
+                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                pref.edit().remove("favourites").apply();
+                parent.removeView(parent.getChildAt(1));
+                parent.removeView(parent.getChildAt(2));
+                parent.removeView(parent.getChildAt(3));
                 return true;
             }
         });
@@ -213,7 +218,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
                 currentWeatherIcon.setImageResource(getWeatherIconFromDescription(weather));
                 currentTemp.setText(String.format(temp + "°C"));
                 currentMinTemp.setText(String.format("Min " + tempMin + "°C"));
-                currentMaxTemp.setText(String.format("Max" + tempMax + "°C"));
+                currentMaxTemp.setText(String.format("Max " + tempMax + "°C"));
                 windSpeed.setText(String.format("The wind speed is %s", wind + " KPH"));
                 currentWindDirection.setImageResource(R.drawable.ic_arrow_upward);
 
@@ -244,6 +249,7 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
             case "shower rain": return R.drawable.rain;
             case "light rain": return R.drawable.rain;
             case "haze": return R.drawable.mist;
+            case "moderate rain": return R.drawable.rain;
             default: return R.drawable.sunny;
         }
     }
@@ -254,13 +260,13 @@ public class CurrentForecastFragment extends Fragment implements GoogleApiClient
     }
 
     //todo: move things to constants (e.g., favourites string)
-    private void saveToFavourites(String favourite) {
+    private void saveToFavourites(String favourites) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         Set<String> favList = pref.getStringSet("favourites", new HashSet<String>());
         Set<String> set = new HashSet<String>();
         if (favList.size() < MAX_FAVOURITES) {
             set.addAll(getFavourite());
-            set.add(favourite);
+            set.add(favourites);
             pref.edit().putStringSet("favourites", set).apply();
         } else {
             Toast.makeText(getActivity(), "I pity the fool who tries to add more than 3 favourites", Toast.LENGTH_LONG).show();

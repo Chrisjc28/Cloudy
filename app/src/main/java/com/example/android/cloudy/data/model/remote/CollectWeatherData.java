@@ -25,7 +25,7 @@ public class CollectWeatherData implements WeatherDAO {
 
     @Override
     public void collectWeather(String citySearch, final WeatherCallback cb) {
-        if (API_KEY == null) {
+        if (API_KEY.equals("")) {
             Log.i("CHRIS", "CollectWeatherData: Error with the api key ");
         }
 

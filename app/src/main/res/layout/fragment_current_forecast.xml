@@ -43,11 +43,20 @@
 
             <include layout="@layout/weather_details_card_view" />
 
-            <include layout="@layout/weather_details_card_view" />
+            <include
+                android:id="@+id/first_fav"
+                layout="@layout/weather_details_card_view"
+                />
 
-            <include layout="@layout/weather_details_card_view" />
+            <include
+                android:id="@+id/second_fav"
+                layout="@layout/weather_details_card_view"
+                />
 
-            <include layout="@layout/weather_details_card_view" />
+            <include
+                android:id="@+id/third_fav"
+                layout="@layout/weather_details_card_view"
+                />
 
         </LinearLayout>
 

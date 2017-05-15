@@ -62,8 +62,7 @@ public class DailyForecastFragment extends Fragment implements PlaceSelected {
         collectWeatherData.collectForecast(selectedPlace, new ForecastCallback() {
             @Override
             public void success(ArrayList<DailyForecast> dailyForecasts) {
-                Log.i("CHRIS", "success:  successful");
-                forecastAdapter = new ForecastAdapter(getWindForecast(dailyForecasts));
+                forecastAdapter = new ForecastAdapter(getSevenDayForecast(dailyForecasts));
                 weatherRecyclerView.setAdapter(forecastAdapter);
             }
 
@@ -74,7 +73,7 @@ public class DailyForecastFragment extends Fragment implements PlaceSelected {
         });
     }
 
-    private ArrayList<ForecastHolder> getWindForecast(ArrayList<DailyForecast> dailyForecasts) {
+    public ArrayList<ForecastHolder> getSevenDayForecast(ArrayList<DailyForecast> dailyForecasts) {
         fiveDayForecast.clear();
         for (int i = 0; i < dailyForecasts.size(); i++) {
             long date = dailyForecasts.get(i).getDt();
@@ -86,10 +85,10 @@ public class DailyForecastFragment extends Fragment implements PlaceSelected {
             double tempMin = dailyForecasts.get(i).getTemp().getMin();
             double tempMax = dailyForecasts.get(i).getTemp().getMax();
 
-            int minTempInCelcious = (int) (tempMin);
-            int maxTempInCelcious = (int) (tempMax);
+            int minTempInCelsius = (int) (tempMin);
+            int maxTempInCelsius = (int) (tempMax);
 
-            fiveDayForecast.add(new ForecastHolder(date, description, maxTempInCelcious, minTempInCelcious, windForecast));
+            fiveDayForecast.add(new ForecastHolder(date, description, maxTempInCelsius, minTempInCelsius, windForecast));
         }
         return fiveDayForecast;
     }
